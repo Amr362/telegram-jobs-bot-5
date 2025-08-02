@@ -6,6 +6,17 @@ const { createClient } = require("@supabase/supabase-js");
 const fs = require("fs");
 require("dotenv").config();
 
+// التحقق من المتغيرات البيئية المطلوبة
+const requiredEnvVars = ['BOT_TOKEN', 'SUPABASE_URL', 'SUPABASE_KEY'];
+for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+        console.error(`❌ متغير البيئة ${envVar} مطلوب ولكنه غير موجود`);
+        process.exit(1);
+    }
+}
+
+console.log("✅ جميع متغيرات البيئة متوفرة");
+
 // إعداد البوت
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
