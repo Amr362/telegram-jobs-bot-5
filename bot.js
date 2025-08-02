@@ -336,7 +336,7 @@ app.get("/health", (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`🌐 Server is live on port ${PORT}`);
+    console.log("🚀 Arab Annotators Bot بدأ العمل...");
+    console.log("✅ البوت جاهز لاستقبال الرسائل");
+    console.log(`🔗 Dev URL متاح للـ UptimeRobot monitoring`);
 });
-
-console.log("🚀 Arab Annotators Bot بدأ العمل...");
-console.log("✅ البوت جاهز لاستقبال الرسائل");
