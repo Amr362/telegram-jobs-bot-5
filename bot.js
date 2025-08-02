@@ -200,6 +200,9 @@ async function sendJobsMessage(chatId, filterType) {
     }
 }
 
+// استيراد نظام مراقبة الوظائف
+const jobMonitor = require('./job_monitor');
+
 // دالة توليد رسالة الوظائف
 async function generateJobsMessage(filterType) {
     const currentDate = new Date().toLocaleDateString("ar-EG", {
@@ -209,38 +212,91 @@ async function generateJobsMessage(filterType) {
         day: "numeric"
     });
 
-    let message = `
-🚀 *وظائف Arab Annotators - ${currentDate}*
+    let message = `🚀 *وظائف Arab Annotators - ${currentDate}*\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+    
+    try {
+        // جلب الوظائف من المواقع المختلفة
+        const allJobs = [];
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // البحث في Outlier AI
+        const outlierJobs = await jobMonitor.scrapeOutlierAI();
+        if (outlierJobs.length > 0) {
+            message += `🤖 *Outlier AI - تدريب النماذج العربية:*\n`;
+            outlierJobs.slice(0, 3).forEach(job => {
+                message += `• [${job.title}](${job.link})\n`;
+            });
+            message += `\n`;
+        }
 
-🤖 *وظائف الذكاء الاصطناعي:*
-• [Outlier AI](https://outlier.ai/careers) - تدريب النماذج العربية
-• [Alignerr](https://alignerr.com) - محاذاة الذكاء الاصطناعي
-• [Turing](https://www.turing.com) - هندسة الذكاء الاصطناعي
+        // البحث في Alignerr
+        const alignerrJobs = await jobMonitor.scrapeAlignerr();
+        if (alignerrJobs.length > 0) {
+            message += `⚡ *Alignerr - محاذاة الذكاء الاصطناعي:*\n`;
+            alignerrJobs.slice(0, 3).forEach(job => {
+                message += `• [${job.title}](${job.link})\n`;
+            });
+            message += `\n`;
+        }
 
-📊 *وظائف تعليق البيانات:*
-• [CVAT](https://www.cvat.ai) - تعليق الصور والفيديو
-• [Dataannotation](https://dataannotation.tech) - تصنيف البيانات
-• [Clickworker](https://www.clickworker.com) - مهام متنوعة
+        // البحث في DataAnnotation
+        const dataAnnotationJobs = await jobMonitor.scrapeDataannotationTech();
+        if (dataAnnotationJobs.length > 0) {
+            message += `📊 *DataAnnotation - تصنيف البيانات:*\n`;
+            dataAnnotationJobs.slice(0, 2).forEach(job => {
+                message += `• [${job.title}](${job.link})\n`;
+            });
+            message += `\n`;
+        }
 
-✍️ *منصات العمل الحر:*
-• [Upwork AI Jobs](https://upwork.com) - مشاريع متنوعة
-• [Freelancer](https://freelancer.com) - وظائف عربية
+        // البحث في Turing
+        const turingJobs = await jobMonitor.scrapeTuring();
+        if (turingJobs.length > 0) {
+            message += `💼 *Turing - هندسة الذكاء الاصطناعي:*\n`;
+            turingJobs.slice(0, 2).forEach(job => {
+                message += `• [${job.title}](${job.link})\n`;
+            });
+            message += `\n`;
+        }
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // البحث في Clickworker
+        const clickworkerJobs = await jobMonitor.scrapeClickworker();
+        if (clickworkerJobs.length > 0) {
+            message += `🔄 *Clickworker - مهام متنوعة:*\n`;
+            clickworkerJobs.slice(0, 2).forEach(job => {
+                message += `• [${job.title}](${job.link})\n`;
+            });
+            message += `\n`;
+        }
 
-💡 *نصائح للتقديم:*
-• اكتب CV باللغة الإنجليزية
-• أضف خبراتك في اللغة العربية
-• اذكر مهاراتك التقنية
-• كن صادقاً في مستوى خبرتك
+        // إضافة روابط إضافية ثابتة
+        message += `✍️ *منصات العمل الحر:*\n`;
+        message += `• [Upwork AI Jobs](https://upwork.com/search/jobs/?q=Arabic%20AI) - مشاريع متنوعة\n`;
+        message += `• [Freelancer](https://freelancer.com/jobs/arabic-ai) - وظائف عربية\n`;
+        message += `• [MTurk](https://www.mturk.com/worker) - مهام صغيرة\n\n`;
 
-🔔 *للحصول على وظائف حصرية ومتقدمة، اشترك معنا!*
-💰 اشتراك شهري بـ 50 جنيه فقط
+        message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
-#وظائف_عربية #ذكاء_اصطناعي #عمل_عن_بعد
-`;
+    } catch (error) {
+        console.error("خطأ في جلب الوظائف:", error);
+        message += `❌ *تعذر جلب بعض الوظائف حالياً*\n\n`;
+        
+        // إضافة روابط احتياطية
+        message += `🤖 *مواقع موصى بها:*\n`;
+        message += `• [Outlier AI](https://outlier.ai/careers) - تدريب النماذج العربية\n`;
+        message += `• [Scale AI](https://scale.com/careers) - تصنيف البيانات\n`;
+        message += `• [Appen](https://appen.com/careers) - مشاريع الذكاء الاصطناعي\n`;
+        message += `• [DataAnnotation](https://dataannotation.tech) - تعليق البيانات\n\n`;
+    }
+
+    message += `💡 *نصائح للتقديم:*\n`;
+    message += `• اكتب CV باللغة الإنجليزية\n`;
+    message += `• أضف خبراتك في اللغة العربية\n`;
+    message += `• اذكر مهاراتك التقنية\n`;
+    message += `• كن صادقاً في مستوى خبرتك\n\n`;
+
+    message += `🔔 *للحصول على وظائف حصرية ومتقدمة، اشترك معنا!*\n`;
+    message += `💰 اشتراك شهري بـ 50 جنيه فقط\n\n`;
+    message += `#وظائف_عربية #ذكاء_اصطناعي #عمل_عن_بعد`;
 
     return message;
 }
