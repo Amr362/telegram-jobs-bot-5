@@ -907,12 +907,7 @@ app.get("/", (req, res) => {
 
 // فحص الصحة
 app.get("/health", (req, res) => {
-    res.json({ 
-        status: "healthy", 
-        uptime: process.uptime(),
-        bot_status: "running",
-        timestamp: new Date().toISOString()
-    });
+    res.json({ status: "healthy", uptime: process.uptime() });
 });
 
 // بينغ سريع
@@ -920,24 +915,17 @@ app.get("/ping", (req, res) => {
     res.send("pong");
 });
 
-// إحصائيات تفصيلية (اختيارية)
+// إحصائيات تفصيلية
 app.get("/stats", (req, res) => {
     res.json({
-        status: "✅ Arab Annotators Bot v3.0 is running!",
-        version: "3.0.0",
-        uptime: Math.floor(process.uptime()),
-        uptime_formatted: `${Math.floor(process.uptime() / 3600)}h ${Math.floor((process.uptime() % 3600) / 60)}m`,
-        total_sources: Object.values(stateManager.config.jobSources).reduce((sum, cat) => sum + cat.length, 0),
-        categories: Object.keys(stateManager.config.jobSources).length,
-        supported_regions: stateManager.regions.length,
-        keywords: stateManager.keywords.length,
-        timestamp: new Date().toISOString()
+        status: "✅ Bot is running!",
+        bot_name: "Arab Annotators Bot",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
     });
 });
 
-app.listen(3000, "0.0.0.0", () => {
-    console.log("🌐 Web server running on port 3000");
-});
+app.listen(3000, () => console.log("🌐 Web server running on port 3000"));
 
 // ===== معالجة الأخطاء =====
 bot.on("error", (error) => {
