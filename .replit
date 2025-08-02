@@ -21,10 +21,6 @@ args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 بدء تشغيل Arab Annotators Bot...\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
 args = "node bot.js"
 
 [[ports]]
