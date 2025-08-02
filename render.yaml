@@ -1,0 +1,25 @@
+# Exported from Render on 2025-08-02T11:22:08Z
+services:
+- type: worker   # ← غيّر من web إلى worker
+  name: telegram-jobs-bot-5
+  runtime: node
+  repo: https://github.com/Amr362/telegram-jobs-bot-5
+  plan: free
+  envVars:
+  - key: PAYPAL_EMAIL
+    sync: false
+  - key: ADMIN_USER_ID
+    sync: false
+  - key: ORANGE_CASH
+    sync: false
+  - key: BOT_TOKEN
+    sync: false
+  - key: SUPABASE_KEY
+    sync: false
+  - key: SUPABASE_URL
+    sync: false
+  region: oregon
+  buildCommand: npm install
+  startCommand: node bot.js
+  autoDeployTrigger: commit
+version: "1"
