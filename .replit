@@ -8,7 +8,7 @@ channel = "stable-25_05"
 run = ["sh", "-c", "npm run dev"]
 
 [workflows]
-runButton = "Start Server"
+runButton = "Start Advanced Bot"
 
 [[workflows.workflow]]
 name = "Start Bot"
@@ -36,23 +36,6 @@ args = "npm install"
 task = "shell.exec"
 args = "node bot.js"
 
-[[workflows.workflow]]
-name = "Start Server"
-author = 33787620
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node server.js"
-
 [[ports]]
 localPort = 3000
 externalPort = 80
-
-[[ports]]
-localPort = 5000
-externalPort = 5000

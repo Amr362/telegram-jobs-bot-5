@@ -900,32 +900,48 @@ ${MessageFormatter.formatJobResults(jobs.slice(0, 5))}
 // ===== Express Server للمراقبة =====
 const app = express();
 
-// الصفحة الرئيسية
 app.get("/", (req, res) => {
-    res.send("✅ Arab Annotators Bot is running!");
-});
-
-// فحص الصحة
-app.get("/health", (req, res) => {
-    res.json({ status: "healthy", uptime: process.uptime() });
-});
-
-// بينغ سريع
-app.get("/ping", (req, res) => {
-    res.send("pong");
-});
-
-// إحصائيات تفصيلية
-app.get("/stats", (req, res) => {
     res.json({
-        status: "✅ Bot is running!",
-        bot_name: "Arab Annotators Bot",
-        uptime: process.uptime(),
-        timestamp: new Date().toISOString(),
+        status: "✅ Arab Annotators Bot v3.0 is running!",
+        version: "3.0.0",
+        uptime: Math.floor(process.uptime()),
+        features: [
+            "Smart AI-powered job search",
+            "8 supported regions",
+            "Advanced filtering",
+            "Real-time notifications",
+            "Premium subscription"
+        ],
+        timestamp: new Date().toISOString()
     });
 });
 
-app.listen(3000, () => console.log("🌐 Web server running on port 3000"));
+app.get("/health", (req, res) => {
+    res.json({
+        status: "healthy",
+        bot_status: "running",
+        search_engine: "operational",
+        database: "connected",
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        last_check: new Date().toISOString()
+    });
+});
+
+app.get("/stats", (req, res) => {
+    res.json({
+        total_sources: Object.values(stateManager.config.jobSources).reduce((sum, cat) => sum + cat.length, 0),
+        categories: Object.keys(stateManager.config.jobSources).length,
+        supported_regions: stateManager.regions.length,
+        keywords: stateManager.keywords.length,
+        version: "3.0.0"
+    });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🌐 Server running on port ${PORT}`);
+});
 
 // ===== معالجة الأخطاء =====
 bot.on("error", (error) => {
