@@ -10,10 +10,8 @@ app.get('/', (req, res) => {
 // endpoint للصحة
 app.get('/health', (req, res) => {
     res.json({ 
-        status: 'healthy', 
-        uptime: process.uptime(),
-        timestamp: new Date().toISOString(),
-        service: 'Arab Annotators Bot'
+        status: 'ok', 
+        timestamp: new Date().toISOString()
     });
 });
 
@@ -23,8 +21,8 @@ app.get('/ping', (req, res) => {
 });
 
 // بدء تشغيل السيرفر
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🌐 Server running on port ${PORT}`);
-    console.log(`✅ Health endpoint: http://localhost:${PORT}/health`);
+    console.log(`✅ Health endpoint available at /health`);
 });
