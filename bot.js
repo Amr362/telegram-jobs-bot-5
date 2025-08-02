@@ -384,9 +384,24 @@ app.get("/", (req, res) => {
 app.get("/health", (req, res) => {
     res.json({
         status: "healthy",
+        bot_status: "running",
         uptime: process.uptime(),
-        memory: process.memoryUsage()
+        memory: process.memoryUsage(),
+        timestamp: new Date().toISOString(),
+        last_check: "✅ البوت يعمل بشكل طبيعي"
     });
+});
+
+app.get("/test", (req, res) => {
+    res.send(`
+        <h1>🤖 Arab Annotators Bot - حالة البوت</h1>
+        <p><strong>حالة البوت:</strong> ✅ يعمل</p>
+        <p><strong>وقت التشغيل:</strong> ${Math.floor(process.uptime())} ثانية</p>
+        <p><strong>الوقت الحالي:</strong> ${new Date().toLocaleString('ar-EG')}</p>
+        <p><strong>إصدار Node.js:</strong> ${process.version}</p>
+        <hr>
+        <p>📱 <a href="https://t.me/arabannotators_bot" target="_blank">رابط البوت على تليجرام</a></p>
+    `);
 });
 
 const PORT = process.env.PORT || 3000;
