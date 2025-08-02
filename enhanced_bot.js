@@ -147,10 +147,10 @@ https://arabannotators.store
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     const userName = msg.from.first_name || "صديقي";
-    
+
     // إعادة تعيين حالة المستخدم
     userStates.set(chatId, { currentMenu: 'main', favorites: [], searchHistory: [] });
-    
+
     bot.sendMessage(chatId, `مرحباً ${userName}! 👋\n\n${WELCOME_MESSAGE}`, {
         parse_mode: "Markdown",
         ...MAIN_MENU
@@ -258,10 +258,10 @@ async function handleSmartLatestJobs(chatId, messageId) {
         });
 
         const smartJobs = await performSmartJobSearch();
-        
+
         if (smartJobs.length > 0) {
             const jobsMessage = formatSmartJobsMessage(smartJobs);
-            
+
             const backButton = {
                 reply_markup: {
                     inline_keyboard: [
@@ -319,7 +319,7 @@ async function handleSmartLatestJobs(chatId, messageId) {
 // دالة البحث حسب الشركة
 async function handleJobsByCompany(chatId, messageId) {
     const companies = [];
-    
+
     // إضافة الشركات من config.json
     Object.values(config.jobSources).forEach(category => {
         category.forEach(job => {
@@ -328,7 +328,7 @@ async function handleJobsByCompany(chatId, messageId) {
             }
         });
     });
-    
+
     // إضافة المواقع الإضافية
     ADDITIONAL_SITES.forEach(site => {
         companies.push(site);
@@ -336,7 +336,7 @@ async function handleJobsByCompany(chatId, messageId) {
 
     const companyButtons = [];
     const companiesPerRow = 2;
-    
+
     for (let i = 0; i < companies.length; i += companiesPerRow) {
         const row = [];
         for (let j = i; j < Math.min(i + companiesPerRow, companies.length); j++) {
@@ -347,7 +347,7 @@ async function handleJobsByCompany(chatId, messageId) {
         }
         companyButtons.push(row);
     }
-    
+
     companyButtons.push([{ text: "🔙 العودة", callback_data: "jobs_menu" }]);
 
     await bot.editMessageText("🏢 *البحث حسب الشركة*\n\nاختر الشركة أو الموقع للبحث فيه:", {
@@ -364,7 +364,7 @@ async function handleJobsByCompany(chatId, messageId) {
 async function handleJobsByRegion(chatId, messageId) {
     const regionButtons = [];
     const regionsPerRow = 2;
-    
+
     for (let i = 0; i < REGIONS.length; i += regionsPerRow) {
         const row = [];
         for (let j = i; j < Math.min(i + regionsPerRow, REGIONS.length); j++) {
@@ -375,7 +375,7 @@ async function handleJobsByRegion(chatId, messageId) {
         }
         regionButtons.push(row);
     }
-    
+
     regionButtons.push([{ text: "🔙 العودة", callback_data: "jobs_menu" }]);
 
     await bot.editMessageText("🌍 *البحث حسب المنطقة*\n\nاختر المنطقة للبحث عن الوظائف فيها:", {
@@ -398,7 +398,7 @@ async function handleJobStatistics(chatId, messageId) {
         });
 
         const stats = await calculateJobStatistics();
-        
+
         const statsMessage = `
 📊 *إحصائيات الوظائف المحدثة*
 
@@ -480,7 +480,7 @@ async function handleFavoriteJobs(chatId, messageId, userState) {
         });
     } else {
         let favoritesMessage = "⭐ *وظائفك المفضلة*\n\n";
-        
+
         userState.favorites.forEach((job, index) => {
             favoritesMessage += `${index + 1}. *${job.title}*\n`;
             favoritesMessage += `   ${job.company}\n`;
@@ -531,7 +531,7 @@ async function handleManualSearch(chatId, messageId) {
 // دالة البحث الذكي الفعلية
 async function performSmartJobSearch() {
     const jobs = [];
-    
+
     try {
         // البحث في المواقع المحددة في config.json
         for (const [category, sites] of Object.entries(config.jobSources)) {
@@ -593,7 +593,7 @@ async function searchInSite(url, keywords) {
         $('a').each((i, element) => {
             const text = $(element).text().toLowerCase();
             const href = $(element).attr('href');
-            
+
             if (href && keywords.some(keyword => 
                 text.includes(keyword.toLowerCase()) || 
                 text.includes('arabic') || 
@@ -659,7 +659,7 @@ function formatSmartJobsMessage(jobs) {
 async function calculateJobStatistics() {
     const totalSources = Object.values(config.jobSources).reduce((sum, category) => sum + category.length, 0) + ADDITIONAL_SITES.length;
     const categoriesCount = Object.keys(config.jobSources).length;
-    
+
     let categoryBreakdown = "";
     Object.entries(config.jobSources).forEach(([category, jobs]) => {
         let categoryName = "";
@@ -695,7 +695,7 @@ bot.on("message", async (msg) => {
     if (text && text.startsWith("/")) return;
 
     const userState = userStates.get(chatId);
-    
+
     if (userState && userState.waitingForSearch && text) {
         // إجراء البحث اليدوي
         userState.waitingForSearch = false;
@@ -707,10 +707,10 @@ bot.on("message", async (msg) => {
 
         try {
             const searchResults = await performManualSearch(text);
-            
+
             if (searchResults.length > 0) {
                 const resultsMessage = formatSearchResults(text, searchResults);
-                
+
                 await bot.editMessageText(resultsMessage, {
                     chat_id: chatId,
                     message_id: searchingMessage.message_id,
@@ -777,7 +777,7 @@ bot.on("message", async (msg) => {
 async function performManualSearch(query) {
     const jobs = [];
     const searchKeywords = [query, ...ARABIC_KEYWORDS];
-    
+
     try {
         // البحث في جميع المواقع
         for (const [category, sites] of Object.entries(config.jobSources)) {
@@ -834,9 +834,9 @@ function formatSearchResults(query, results) {
 const jobMonitoringCron = new cron.CronJob("0 * * * *", async () => {
     try {
         console.log("بدء مراقبة الوظائف الجديدة...");
-        
+
         const newJobs = await performSmartJobSearch();
-        
+
         if (newJobs.length > 0) {
             // إرسال إشعارات للمشتركين
             const { data: subscribers, error } = await supabase
@@ -863,7 +863,7 @@ const jobMonitoringCron = new cron.CronJob("0 * * * *", async () => {
                                 ]
                             }
                         });
-                        
+
                         await new Promise(resolve => setTimeout(resolve, 100));
                     } catch (error) {
                         console.error(`خطأ في إرسال إشعار للمستخدم ${subscriber.chat_id}:`, error);
@@ -891,3 +891,29 @@ console.log("⏰ مراقبة الوظائف مفعلة كل ساعة");
 console.log("🧠 البحث الذكي بالكلمات المفتاحية العربية مفعل");
 console.log("✨ جميع الميزات المطلوبة مفعلة!");
 
+// إضافة Express Server لـ UptimeRobot
+const express = require("express");
+const app = express();
+
+app.get("/", (req, res) => {
+    res.json({
+        status: "✅ Enhanced Bot is running!",
+        bot_name: "Arab Annotators Bot المطور",
+        version: "Enhanced v2.0",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.get("/health", (req, res) => {
+    res.json({
+        status: "healthy",
+        uptime: process.uptime(),
+        memory: process.memoryUsage()
+    });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🌐 Enhanced Server is live on port ${PORT}`);
+});

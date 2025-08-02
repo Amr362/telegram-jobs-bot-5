@@ -366,7 +366,31 @@ process.on("unhandledRejection", (reason, promise) => {
 console.log("🚀 Arab Annotators Bot بدأ العمل...");
 console.log("⏰ المهمة اليومية مجدولة للساعة 10:00 صباحاً بتوقيت القاهرة");
 
+// إضافة Express Server لـ UptimeRobot
+const express = require("express");
+const app = express();
 
+app.get("/", (req, res) => {
+    res.json({
+        status: "✅ Bot is running!",
+        bot_name: "Arab Annotators Bot",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.get("/health", (req, res) => {
+    res.json({
+        status: "healthy",
+        uptime: process.uptime(),
+        memory: process.memoryUsage()
+    });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🌐 Server is live on port ${PORT}`);
+});
 
 const jobMonitor = require('./job_monitor');
 
