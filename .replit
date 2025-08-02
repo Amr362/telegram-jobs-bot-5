@@ -22,3 +22,7 @@ args = "npm install"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node bot.js"
+
+[[ports]]
+localPort = 3000
+externalPort = 80
