@@ -1,0 +1,32 @@
+{
+  "name": "arab-annotators-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for Arab Annotators - Job notifications and subscription management",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "node bot.js"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "jobs",
+    "arab",
+    "annotators",
+    "ai",
+    "data-annotation"
+  ],
+  "author": "Arab Annotators",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0",
+    "axios": "^1.11.0",
+    "cheerio": "^1.1.2",
+    "cron": "^3.1.6",
+    "dotenv": "^16.3.1",
+    "node-telegram-bot-api": "^0.63.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

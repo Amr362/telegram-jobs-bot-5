@@ -1,0 +1,443 @@
+{
+  "jobSources": {
+    "aiJobs": [
+      {
+        "name": "Outlier AI",
+        "url": "https://outlier.ai/careers",
+        "description": "تدريب النماذج اللغوية والذكاء الاصطناعي",
+        "category": "AI Training"
+      },
+      {
+        "name": "Scale AI",
+        "url": "https://scale.com/careers",
+        "description": "تصنيف البيانات وتدريب الذكاء الاصطناعي",
+        "category": "Data Labeling"
+      },
+      {
+        "name": "Appen",
+        "url": "https://appen.com/careers",
+        "description": "مشاريع الذكاء الاصطناعي وتحسين البيانات",
+        "category": "AI Projects"
+      },
+      {
+        "name": "Lionbridge",
+        "url": "https://lionbridge.com/careers",
+        "description": "خدمات الذكاء الاصطناعي والترجمة",
+        "category": "AI & Translation"
+      },
+      {
+        "name": "DataForce",
+        "url": "https://www.dataforce.ai/",
+        "description": "منصة تدريب الذكاء الاصطناعي",
+        "category": "AI Training"
+      },
+      {
+        "name": "Wiraa",
+        "url": "https://www.wiraa.com/",
+        "description": "منصة توظيف تقنية",
+        "category": "Tech Jobs"
+      },
+      {
+        "name": "Ryz Labs",
+        "url": "https://jobs.lever.co/RyzLabs/",
+        "description": "مختبرات تطوير الذكاء الاصطناعي",
+        "category": "AI Development"
+      },
+      {
+        "name": "Micro1.ai",
+        "url": "https://jobs.micro1.ai/",
+        "description": "منصة توظيف للذكاء الاصطناعي",
+        "category": "AI Jobs"
+      },
+      {
+        "name": "Lingotribe",
+        "url": "https://lingotribe.world/apply/",
+        "description": "مشاريع لغوية وترجمة",
+        "category": "Language Projects"
+      },
+      {
+        "name": "Black Forest Labs",
+        "url": "https://job-boards.greenhouse.io/blackforestlabs",
+        "description": "مختبرات الذكاء الاصطناعي",
+        "category": "AI Research"
+      },
+      {
+        "name": "Inflection",
+        "url": "https://inflection.ai/careers",
+        "description": "شركة الذكاء الاصطناعي",
+        "category": "AI Company"
+      }
+    ],
+    "dataAnnotation": [
+      {
+        "name": "Clickworker",
+        "url": "https://clickworker.com/jobs",
+        "description": "مهام تصنيف البيانات والمحتوى",
+        "category": "Data Classification"
+      },
+      {
+        "name": "Remotasks",
+        "url": "https://remotasks.com/jobs",
+        "description": "مهام تعليق البيانات عن بُعد",
+        "category": "Remote Data Tasks"
+      },
+      {
+        "name": "Toloka",
+        "url": "https://toloka.ai/jobs",
+        "description": "منصة تصنيف البيانات من Yandex",
+        "category": "Data Labeling"
+      },
+      {
+        "name": "Microworkers",
+        "url": "https://microworkers.com/jobs",
+        "description": "مهام صغيرة في تصنيف البيانات",
+        "category": "Micro Tasks"
+      }
+    ],
+    "transcriptionSites": [
+      {
+        "name": "Rev",
+        "url": "https://www.rev.com/freelancers/transcription",
+        "description": "تفريغ وتدقيق الصوتيات",
+        "category": "Transcription"
+      },
+      {
+        "name": "GoTranscript",
+        "url": "https://gotranscript.com/",
+        "description": "وظائف التفريغ الصوتي",
+        "category": "Audio Transcription"
+      },
+      {
+        "name": "TranscribeMe",
+        "url": "https://www.transcribeme.com/freelancers/",
+        "description": "تفريغ المحتوى الصوتي",
+        "category": "Audio Processing"
+      },
+      {
+        "name": "Scribie",
+        "url": "https://scribie.com/transcription/freelance#intro",
+        "description": "خدمات التفريغ المتخصصة",
+        "category": "Professional Transcription"
+      },
+      {
+        "name": "Speechpad",
+        "url": "https://www.speechpad.com/worker/jobs",
+        "description": "منصة تفريغ الكلام",
+        "category": "Speech Processing"
+      },
+      {
+        "name": "3playmedia",
+        "url": "https://www.3playmedia.com/company/jobs/contract-work/",
+        "description": "خدمات الوسائط المتعددة",
+        "category": "Media Services"
+      },
+      {
+        "name": "Crowdee",
+        "url": "https://www.crowdee.com/",
+        "description": "منصة العمل الجماعي",
+        "category": "Crowdsourcing"
+      },
+      {
+        "name": "Castingwords",
+        "url": "https://workshop.castingwords.com/",
+        "description": "ورشة الكلمات المنطوقة",
+        "category": "Voice Work"
+      },
+      {
+        "name": "Happyscribe",
+        "url": "https://www.happyscribe.com/transcription-jobs",
+        "description": "تفريغ سعيد ومتطور",
+        "category": "Modern Transcription"
+      },
+      {
+        "name": "Waywithwords",
+        "url": "https://waywithwords.net/",
+        "description": "طريق الكلمات المتخصص",
+        "category": "Professional Writing"
+      }
+    ],
+    "testingPlatforms": [
+      {
+        "name": "Prolific",
+        "url": "https://www.prolific.com/",
+        "description": "منصة البحوث والاستطلاعات",
+        "category": "Research Platform"
+      },
+      {
+        "name": "Utest",
+        "url": "https://www.utest.com/",
+        "description": "اختبار التطبيقات والمواقع",
+        "category": "Software Testing"
+      },
+      {
+        "name": "Usertesting",
+        "url": "https://www.usertesting.com/",
+        "description": "اختبار تجربة المستخدم",
+        "category": "UX Testing"
+      },
+      {
+        "name": "Respondent",
+        "url": "https://www.respondent.io/",
+        "description": "منصة المشاركة في البحوث",
+        "category": "Research Participation"
+      },
+      {
+        "name": "User Interviews",
+        "url": "https://www.userinterviews.com/",
+        "description": "مقابلات المستخدمين",
+        "category": "User Research"
+      },
+      {
+        "name": "Testbirds",
+        "url": "https://nest.testbirds.com/home/tester",
+        "description": "اختبار التطبيقات المتقدم",
+        "category": "App Testing"
+      },
+      {
+        "name": "Userlytics",
+        "url": "https://www.userlytics.com/user-experience-research/paid-ux-testing/",
+        "description": "تحليلات المستخدم المدفوعة",
+        "category": "UX Analytics"
+      },
+      {
+        "name": "Playtestcloud",
+        "url": "https://app.playtestcloud.com/signup",
+        "description": "اختبار الألعاب السحابي",
+        "category": "Game Testing"
+      }
+    ],
+    "freelancePlatforms": [
+      {
+        "name": "LinkedIn Jobs",
+        "url": "https://linkedin.com/jobs/search/?keywords=AI%20Arabic",
+        "description": "وظائف الذكاء الاصطناعي العربية",
+        "category": "Professional Network"
+      },
+      {
+        "name": "Upwork",
+        "url": "https://upwork.com/search/jobs/?q=Arabic%20AI",
+        "description": "مشاريع الذكاء الاصطناعي العربية",
+        "category": "Freelance"
+      },
+      {
+        "name": "Freelancer",
+        "url": "https://freelancer.com/jobs/arabic-ai",
+        "description": "مشاريع تقنية عربية",
+        "category": "Freelance"
+      },
+      {
+        "name": "Fiverr",
+        "url": "https://fiverr.com/search/gigs?query=arabic%20ai",
+        "description": "خدمات الذكاء الاصطناعي العربية",
+        "category": "Services"
+      },
+      {
+        "name": "Guru",
+        "url": "https://guru.com/d/jobs/q/arabic-ai",
+        "description": "وظائف تقنية متخصصة",
+        "category": "Tech Jobs"
+      }
+    ],
+    "smallGigsSites": [
+      {
+        "name": "Sproutgigs",
+        "url": "https://sproutgigs.com/",
+        "description": "مهام صغيرة متنوعة",
+        "category": "Micro Tasks"
+      },
+      {
+        "name": "Microworkers",
+        "url": "https://www.microworkers.com/",
+        "description": "العمال الصغار",
+        "category": "Micro Jobs"
+      },
+      {
+        "name": "Coinpayu",
+        "url": "https://www.coinpayu.com",
+        "description": "مهام مدفوعة بالعملة الرقمية",
+        "category": "Crypto Tasks"
+      },
+      {
+        "name": "Timebucks",
+        "url": "https://timebucks.com/",
+        "description": "كسب المال من الوقت",
+        "category": "Time-based Tasks"
+      }
+    ],
+    "surveySites": [
+      {
+        "name": "Surveoo",
+        "url": "https://www.surveoo.com/ar/",
+        "description": "استطلاعات مدفوعة باللغة العربية",
+        "category": "Arabic Surveys"
+      },
+      {
+        "name": "Swagbucks",
+        "url": "https://www.swagbucks.com/",
+        "description": "نقاط مقابل المهام",
+        "category": "Rewards Platform"
+      },
+      {
+        "name": "Toluna",
+        "url": "https://www.toluna.com/",
+        "description": "استطلاعات الرأي العالمية",
+        "category": "Opinion Surveys"
+      },
+      {
+        "name": "Prizerebel",
+        "url": "https://www.prizerebel.com/",
+        "description": "جوائز مقابل المشاركة",
+        "category": "Prize Platform"
+      }
+    ],
+    "techCompanies": [
+      {
+        "name": "OpenAI Careers",
+        "url": "https://openai.com/careers",
+        "description": "وظائف في شركة OpenAI",
+        "category": "AI Company"
+      },
+      {
+        "name": "Google AI Jobs",
+        "url": "https://careers.google.com/jobs/results/?q=AI",
+        "description": "وظائف الذكاء الاصطناعي في Google",
+        "category": "Tech Giant"
+      },
+      {
+        "name": "Microsoft AI",
+        "url": "https://careers.microsoft.com/search?q=AI",
+        "description": "وظائف الذكاء الاصطناعي في Microsoft",
+        "category": "Tech Giant"
+      },
+      {
+        "name": "Meta AI",
+        "url": "https://careers.meta.com/jobs/?q=AI",
+        "description": "وظائف الذكاء الاصطناعي في Meta",
+        "category": "Social Media"
+      },
+      {
+        "name": "Amazon",
+        "url": "https://amazon.jobs/en/search?base_query=AI",
+        "description": "وظائف الذكاء الاصطناعي في أمازون",
+        "category": "E-commerce Giant"
+      }
+    ],
+    "arabicSpecific": [
+      {
+        "name": "KAUST Jobs",
+        "url": "https://careers.kaust.edu.sa/jobs",
+        "description": "وظائف أكاديمية في الذكاء الاصطناعي",
+        "category": "Academic"
+      },
+      {
+        "name": "MBZUAI Careers",
+        "url": "https://mbzuai.ac.ae/careers",
+        "description": "جامعة محمد بن زايد للذكاء الاصطناعي",
+        "category": "Academic"
+      },
+      {
+        "name": "Careem Careers",
+        "url": "https://careers.careem.com/jobs",
+        "description": "وظائف تقنية في كريم",
+        "category": "Regional Tech"
+      },
+      {
+        "name": "Noon Careers",
+        "url": "https://careers.noon.com/jobs",
+        "description": "وظائف تقنية في نون",
+        "category": "E-commerce"
+      }
+    ]
+  },
+  "settings": {
+    "dailyJobTime": "10:00",
+    "timezone": "Africa/Cairo",
+    "maxJobsPerCategory": 8,
+    "refreshInterval": 3600000,
+    "enableSmartSearch": true,
+    "enableNotifications": true,
+    "searchDepth": "comprehensive"
+  },
+  "searchKeywords": {
+    "arabic": [
+      "مطلوب لغة عربية",
+      "Arabic Language",
+      "Arabic Annotator",
+      "الشرق الأوسط",
+      "AI Training Arabic",
+      "Voice Actor Arabic",
+      "Transcription Arabic",
+      "تفريغ صوت",
+      "Voice Over Arabic",
+      "Data Collection Arabic",
+      "تدريب الذكاء الاصطناعي للغة العربية",
+      "Arabic NLP",
+      "Arabic AI",
+      "Middle East",
+      "Arabic Speaker",
+      "Arabic Data",
+      "Arabic Content",
+      "Arabic Transcription",
+      "Arabic Voice",
+      "Arabic Dataset"
+    ],
+    "general": [
+      "AI Training",
+      "Data Annotation",
+      "Machine Learning",
+      "Natural Language Processing",
+      "Voice Recognition",
+      "Speech Processing",
+      "Content Moderation",
+      "Data Labeling",
+      "Remote Work",
+      "Freelance AI"
+    ]
+  },
+  "regions": [
+    {
+      "name": "مصر",
+      "code": "egypt",
+      "keywords": ["Egypt", "Cairo", "مصر", "القاهرة", "Alexandria", "الإسكندرية"]
+    },
+    {
+      "name": "السعودية",
+      "code": "saudi",
+      "keywords": ["Saudi", "Riyadh", "السعودية", "الرياض", "Jeddah", "جدة"]
+    },
+    {
+      "name": "الإمارات",
+      "code": "uae",
+      "keywords": ["UAE", "Dubai", "الإمارات", "دبي", "Abu Dhabi", "أبوظبي"]
+    },
+    {
+      "name": "المغرب",
+      "code": "morocco",
+      "keywords": ["Morocco", "Casablanca", "المغرب", "الدار البيضاء", "Rabat", "الرباط"]
+    },
+    {
+      "name": "الأردن",
+      "code": "jordan",
+      "keywords": ["Jordan", "Amman", "الأردن", "عمان"]
+    },
+    {
+      "name": "لبنان",
+      "code": "lebanon",
+      "keywords": ["Lebanon", "Beirut", "لبنان", "بيروت"]
+    },
+    {
+      "name": "الشرق الأوسط",
+      "code": "middle_east",
+      "keywords": ["Middle East", "MENA", "الشرق الأوسط", "منطقة الشرق الأوسط"]
+    }
+  ],
+  "messages": {
+    "dailyGreeting": "🌅 صباح الخير! إليك أحدث الوظائف في مجال الذكاء الاصطناعي والتقنية",
+    "subscriptionReminder": "🔔 للحصول على وظائف حصرية ومتقدمة، اشترك معنا!",
+    "footerNote": "💡 نصيحة: اكتب CV باللغة الإنجليزية واذكر خبراتك في اللغة العربية",
+    "smartSearchEnabled": "🔍 البحث الذكي مفعل - سنجد لك أفضل الوظائف تلقائياً",
+    "noJobsFound": "❌ لم يتم العثور على وظائف جديدة في الوقت الحالي. سنواصل البحث!",
+    "errorMessage": "⚠️ حدث خطأ في البحث. سنحاول مرة أخرى قريباً."
+  }
+}
+
