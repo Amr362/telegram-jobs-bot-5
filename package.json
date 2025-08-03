@@ -1,11 +1,17 @@
 {
-  "name": "arab-annotators-bot",
-  "version": "1.0.0",
-  "description": "Telegram bot for Arab Annotators - Job notifications and subscription management",
-  "main": "bot.js",
+  "name": "arab-annotators-bot-v4",
+  "version": "4.0.0",
+  "description": "Advanced Telegram bot for Arab Annotators - Job notifications with superior search engine",
+  "main": "enhanced_bot_v4.js",
   "scripts": {
-    "start": "node bot.js",
-    "dev": "node bot.js"
+    "start": "node enhanced_bot_v4.js",
+    "dev": "nodemon enhanced_bot_v4.js",
+    "health": "node health_check.js",
+    "deploy": "./deploy.sh",
+    "test": "echo \"No tests specified\" && exit 0",
+    "build": "echo \"No build process required\" && exit 0",
+    "lint": "eslint *.js --fix",
+    "format": "prettier --write *.js"
   },
   "keywords": [
     "telegram",
@@ -14,20 +20,56 @@
     "arab",
     "annotators",
     "ai",
-    "data-annotation"
+    "data-annotation",
+    "machine-learning",
+    "nlp",
+    "arabic",
+    "search-engine",
+    "automation"
   ],
-  "author": "Arab Annotators",
+  "author": "Arab Annotators Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Amr362/telegram-jobs-bot-5.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Amr362/telegram-jobs-bot-5/issues"
+  },
+  "homepage": "https://github.com/Amr362/telegram-jobs-bot-5#readme",
   "dependencies": {
-    "@supabase/supabase-js": "^2.38.0",
-    "axios": "^1.11.0",
-    "cheerio": "^1.1.2",
+    "@supabase/supabase-js": "^2.39.0",
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
     "cron": "^3.1.6",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "node-telegram-bot-api": "^0.63.0"
+    "node-telegram-bot-api": "^0.66.0",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "compression": "^1.7.4",
+    "rate-limiter-flexible": "^4.0.1",
+    "winston": "^3.11.0",
+    "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "@types/node": "^20.10.5"
   },
   "engines": {
-    "node": ">=18.0.0"
-  }
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "os": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ]
 }
+
