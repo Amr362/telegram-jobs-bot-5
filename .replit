@@ -1,8 +1,10 @@
 modules = ["nodejs-18"]
-run = "npm run dev"
+run = "npm start"
 
 [nix]
 channel = "stable-25_05"
 
 [deployment]
-run = ["sh", "-c", "npm run dev"]
+run = ["sh", "-c", "npm start"]
+
+
