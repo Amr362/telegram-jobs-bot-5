@@ -1,85 +1,8 @@
-# Replit Configuration for Arab Annotators Bot
+modules = ["nodejs-18"]
+run = "npm run dev"
 
 [nix]
-channel = "stable-22_11"
+channel = "stable-25_05"
 
 [deployment]
-<<<<<<< HEAD
 run = ["sh", "-c", "npm run dev"]
-
-[workflows]
-
-[[workflows.workflow]]
-name = "Start Bot"
-author = 33787620
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node bot.js"
-
-[[workflows.workflow]]
-name = "Start Advanced Bot"
-author = 33787620
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node bot.js"
-=======
-run = ["npm", "start"]
-deploymentTarget = "cloudrun"
-ignorePorts = false
->>>>>>> 93e1cb38869ad4790b2e6bd63a6aa3c96a7d4757
-
-[[ports]]
-localPort = 3000
-externalPort = 80
-
-[env]
-NODE_ENV = "production"
-
-[packager]
-language = "nodejs"
-
-[packager.features]
-packageSearch = true
-guessImports = true
-enabledForHosting = false
-
-[languages]
-
-[languages.javascript]
-pattern = "**/{*.js,*.jsx,*.ts,*.tsx,*.json}"
-
-[languages.javascript.languageServer]
-start = "typescript-language-server --stdio"
-
-[gitHubImport]
-requiredFiles = [".replit", "replit.nix", "package.json"]
-
-[processes]
-main = "npm start"
-
-[processes.bot]
-command = "node enhanced_bot_v4.js"
-restart = "always"
-
-[processes.health]
-command = "node health_check.js"
-restart = "on-failure"
-
-[secrets]
-BOT_TOKEN = ""
-SUPABASE_URL = ""
-SUPABASE_KEY = ""
-GITHUB_TOKEN = ""
-
