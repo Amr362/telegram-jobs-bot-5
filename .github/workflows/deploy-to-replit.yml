@@ -1,0 +1,77 @@
+name: Deploy to Replit
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm ci
+        npm audit fix --force
+        
+    - name: Run tests
+      run: |
+        npm test --if-present
+        
+    - name: Build project
+      run: |
+        npm run build --if-present
+        
+    - name: Deploy to Replit
+      env:
+        REPLIT_TOKEN: ${{ secrets.REPLIT_TOKEN }}
+        REPLIT_URL: ${{ secrets.REPLIT_URL }}
+      run: |
+        echo "🚀 Deploying to Replit..."
+        
+        # تحديث Replit عبر webhook
+        if [ ! -z "$REPLIT_URL" ]; then
+          curl -X POST "$REPLIT_URL" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $REPLIT_TOKEN" \
+            -d '{
+              "action": "deploy",
+              "branch": "'$GITHUB_REF_NAME'",
+              "commit": "'$GITHUB_SHA'",
+              "repository": "'$GITHUB_REPOSITORY'"
+            }'
+        fi
+        
+        # إرسال إشعار نجح النشر
+        echo "✅ Deployment completed successfully!"
+        
+    - name: Notify deployment status
+      if: always()
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          MESSAGE="✅ تم نشر التحديثات بنجاح على Replit!%0A%0A🔗 المستودع: $GITHUB_REPOSITORY%0A📝 الفرع: $GITHUB_REF_NAME%0A🆔 الكوميت: ${GITHUB_SHA:0:7}"
+        else
+          MESSAGE="❌ فشل في نشر التحديثات على Replit!%0A%0A🔗 المستودع: $GITHUB_REPOSITORY%0A📝 الفرع: $GITHUB_REF_NAME%0A🆔 الكوميت: ${GITHUB_SHA:0:7}"
+        fi
+        
+        if [ ! -z "$TELEGRAM_BOT_TOKEN" ] && [ ! -z "$TELEGRAM_CHAT_ID" ]; then
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+            -d "chat_id=$TELEGRAM_CHAT_ID" \
+            -d "text=$MESSAGE" \
+            -d "parse_mode=HTML"
+        fi
+
