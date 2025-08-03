@@ -17,7 +17,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20.x' # تم التحديث إلى 20.x
+        node-version: '20.x'
         cache: 'npm'
         
     - name: Install dependencies
@@ -47,7 +47,7 @@ jobs:
         
         # تحديث Replit عبر webhook
         if [ ! -z "$REPLIT_URL" ]; then
-          curl -v -X POST "$REPLIT_URL" \
+          CURL_OUTPUT=$(curl -v -X POST "$REPLIT_URL" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $REPLIT_TOKEN" \
             -d '{
@@ -55,9 +55,17 @@ jobs:
               "branch": "'$GITHUB_REF_NAME'",
               "commit": "'$GITHUB_SHA'",
               "repository": "'$GITHUB_REPOSITORY'"
-            }'
+            }' 2>&1)
+          echo "CURL_OUTPUT: $CURL_OUTPUT"
+          echo "CURL_EXIT_CODE: $?"
+          # Check if curl command was successful (exit code 0) and Replit returned a success message
+          if [ $? -ne 0 ] || ! echo "$CURL_OUTPUT" | grep -q "success":true; then
+            echo "❌ Replit deployment failed or returned an error." >&2
+            exit 1
+          fi
         else
-          echo "❌ REPLIT_URL is not set. Skipping Replit deployment."
+          echo "❌ REPLIT_URL is not set. Skipping Replit deployment." >&2
+          exit 1
         fi
         
         # إرسال إشعار نجح النشر
