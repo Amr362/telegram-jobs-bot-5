@@ -33,6 +33,11 @@ jobs:
       run: |
         npm run build --if-present
         
+    - name: Debug Replit Environment Variables
+      run: |
+        echo "REPLIT_TOKEN: ${{ secrets.REPLIT_TOKEN }}"
+        echo "REPLIT_URL: ${{ secrets.REPLIT_URL }}"
+        
     - name: Deploy to Replit
       env:
         REPLIT_TOKEN: ${{ secrets.REPLIT_TOKEN }}
@@ -42,7 +47,7 @@ jobs:
         
         # تحديث Replit عبر webhook
         if [ ! -z "$REPLIT_URL" ]; then
-          curl -X POST "$REPLIT_URL" \
+          curl -v -X POST "$REPLIT_URL" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $REPLIT_TOKEN" \
             -d '{
@@ -51,10 +56,12 @@ jobs:
               "commit": "'$GITHUB_SHA'",
               "repository": "'$GITHUB_REPOSITORY'"
             }'
+        else
+          echo "❌ REPLIT_URL is not set. Skipping Replit deployment."
         fi
         
         # إرسال إشعار نجح النشر
-        echo "✅ Deployment completed successfully!"
+        echo "✅ Deployment command sent to Replit!"
         
     - name: Notify deployment status
       if: always()
@@ -74,4 +81,5 @@ jobs:
             -d "text=$MESSAGE" \
             -d "parse_mode=HTML"
         fi
+
 
