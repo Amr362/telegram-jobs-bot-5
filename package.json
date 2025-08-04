@@ -50,6 +50,7 @@
     "node-cache": "^5.1.2",
     "node-telegram-bot-api": "^0.63.0",
     "rate-limiter-flexible": "^4.0.1",
+    "undici": "^5.29.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {
