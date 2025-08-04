@@ -212,7 +212,7 @@ class AdvancedStateManager {
                     user_data: userData,
                     updated_at: new Date()
                 });
-
+            
             if (error) throw error;
             return true;
         } catch (error) {
@@ -229,7 +229,7 @@ class AdvancedStateManager {
                 .select('user_data')
                 .eq('chat_id', chatId)
                 .single();
-
+            
             if (error) throw error;
             return data?.user_data || null;
         } catch (error) {
@@ -256,9 +256,9 @@ class SuperiorJobSearchEngine {
     async intelligentSearch(filters = {}, userId = null) {
         const startTime = Date.now();
         const searchId = this.generateSearchId();
-
+        
         console.log(`🔍 [${searchId}] بدء البحث الذكي المتطور...`);
-
+        
         try {
             // فحص الكاش أولاً
             const cacheKey = this.generateCacheKey(filters);
@@ -272,7 +272,7 @@ class SuperiorJobSearchEngine {
 
             // البحث المتوازي في جميع المصادر
             const searchPromises = [];
-
+            
             // البحث في المصادر التقليدية
             Object.entries(this.stateManager.config.jobSources).forEach(([category, sites]) => {
                 sites.forEach(site => {
@@ -293,7 +293,7 @@ class SuperiorJobSearchEngine {
 
             // انتظار جميع النتائج
             const allResults = await Promise.allSettled(searchPromises);
-
+            
             // جمع وتنظيف النتائج
             let combinedResults = [];
             allResults.forEach(result => {
@@ -304,7 +304,7 @@ class SuperiorJobSearchEngine {
 
             // تطبيق الذكاء الاصطناعي للتصفية والترتيب
             const intelligentResults = await this.applyAIFiltering(combinedResults, filters);
-
+            
             // حفظ في الكاش
             this.searchCache.set(cacheKey, {
                 results: intelligentResults,
@@ -316,7 +316,7 @@ class SuperiorJobSearchEngine {
             this.updateSearchAnalytics(true, responseTime, filters, userId);
 
             console.log(`✅ [${searchId}] البحث اكتمل في ${responseTime}ms - ${intelligentResults.length} نتيجة عالية الجودة`);
-
+            
             return intelligentResults;
 
         } catch (error) {
@@ -330,7 +330,7 @@ class SuperiorJobSearchEngine {
     async advancedSiteSearch(site, category, filters, searchId) {
         try {
             const userAgent = this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
-
+            
             const response = await axios.get(site.url, {
                 timeout: 10000,
                 headers: {
@@ -348,7 +348,7 @@ class SuperiorJobSearchEngine {
 
             // محددات متقدمة لاستخراج الوظائف
             const selectors = this.getAdvancedSelectors(site.name);
-
+            
             selectors.forEach(selector => {
                 $(selector.container).each((i, element) => {
                     const title = this.extractText($, element, selector.title);
@@ -373,7 +373,7 @@ class SuperiorJobSearchEngine {
                             dateFound: new Date().toISOString(),
                             searchId: searchId
                         };
-
+                        
                         jobs.push(job);
                     }
                 });
@@ -448,25 +448,25 @@ class SuperiorJobSearchEngine {
         const found = $(element).find(selector).first();
         const href = found.attr('href');
         if (!href) return '';
-
+        
         return href.startsWith('http') ? href : new URL(href, baseUrl).toString();
     }
 
     // فحص جودة الوظيفة
     isHighQualityJob(title, link, company, filters) {
         if (!title || !link || title.length < 10) return false;
-
+        
         const titleLower = title.toLowerCase();
-
+        
         // فحص الكلمات المفتاحية المتقدم
         const hasRelevantKeywords = this.checkAdvancedKeywords(titleLower, filters);
-
+        
         // فحص جودة العنوان
         const hasQualityIndicators = this.checkQualityIndicators(title, company);
-
+        
         // فحص عدم وجود كلمات مرفوضة
         const hasNoSpamWords = this.checkNoSpamWords(titleLower);
-
+        
         return hasRelevantKeywords && hasQualityIndicators && hasNoSpamWords;
     }
 
@@ -518,7 +518,7 @@ class SuperiorJobSearchEngine {
             'annotation': 15, 'تعليق': 15,
             'transcription': 15, 'تفريغ': 15
         };
-
+        
         return weights[keyword.toLowerCase()] || 5;
     }
 
@@ -626,16 +626,16 @@ class SuperiorJobSearchEngine {
     async applyAIFiltering(results, filters) {
         // إزالة المكررات المتقدمة
         const uniqueResults = this.removeDuplicatesAdvanced(results);
-
+        
         // ترتيب بالذكاء الاصطناعي
         const sortedResults = this.aiSort(uniqueResults, filters);
-
+        
         // تطبيق مرشحات الجودة
         const qualityFiltered = sortedResults.filter(job => job.qualityScore >= 30);
-
+        
         // تحديد التنوع
         const diverseResults = this.ensureDiversity(qualityFiltered);
-
+        
         return diverseResults.slice(0, 50); // أفضل 50 نتيجة
     }
 
@@ -663,7 +663,7 @@ class SuperiorJobSearchEngine {
             // الوزن المركب
             const scoreA = (a.matchScore * 0.4) + (a.qualityScore * 0.3) + (this.getRecencyScore(a) * 0.2) + (this.getPopularityScore(a) * 0.1);
             const scoreB = (b.matchScore * 0.4) + (b.qualityScore * 0.3) + (this.getRecencyScore(b) * 0.2) + (this.getPopularityScore(b) * 0.1);
-
+            
             return scoreB - scoreA;
         });
     }
@@ -673,7 +673,7 @@ class SuperiorJobSearchEngine {
         const now = new Date();
         const jobDate = new Date(job.dateFound);
         const hoursDiff = (now - jobDate) / (1000 * 60 * 60);
-
+        
         if (hoursDiff < 1) return 100;
         if (hoursDiff < 24) return 80;
         if (hoursDiff < 168) return 60; // أسبوع
@@ -684,7 +684,7 @@ class SuperiorJobSearchEngine {
     getPopularityScore(job) {
         const popularSources = ['linkedin', 'indeed', 'glassdoor', 'google'];
         const sourceLower = job.source.toLowerCase();
-
+        
         if (popularSources.some(source => sourceLower.includes(source))) return 80;
         return 50;
     }
@@ -694,14 +694,14 @@ class SuperiorJobSearchEngine {
         const diverse = [];
         const categoryCounts = {};
         const sourceCounts = {};
-
+        
         results.forEach(job => {
             const category = job.category || 'other';
             const source = job.source || 'unknown';
-
+            
             categoryCounts[category] = (categoryCounts[category] || 0);
             sourceCounts[source] = (sourceCounts[source] || 0);
-
+            
             // حد أقصى 10 وظائف لكل فئة و 5 لكل مصدر
             if (categoryCounts[category] < 10 && sourceCounts[source] < 5) {
                 diverse.push(job);
@@ -709,7 +709,7 @@ class SuperiorJobSearchEngine {
                 sourceCounts[source]++;
             }
         });
-
+        
         return diverse;
     }
 
@@ -718,7 +718,7 @@ class SuperiorJobSearchEngine {
         try {
             const query = this.buildLinkedInQuery(filters);
             const url = `https://www.linkedin.com/jobs/search/?${query}`;
-
+            
             const response = await axios.get(url, {
                 timeout: 10000,
                 headers: {
@@ -762,15 +762,15 @@ class SuperiorJobSearchEngine {
     // بناء استعلام LinkedIn
     buildLinkedInQuery(filters) {
         const params = new URLSearchParams();
-
+        
         let keywords = 'Arabic AI data annotation';
         if (filters.keyword) keywords += ` ${filters.keyword}`;
-
+        
         params.append('keywords', keywords);
         params.append('location', 'Worldwide');
         params.append('f_TPR', 'r86400'); // آخر 24 ساعة
         params.append('f_WT', '2'); // عمل عن بُعد
-
+        
         return params.toString();
     }
 
@@ -779,7 +779,7 @@ class SuperiorJobSearchEngine {
         try {
             const query = this.buildIndeedQuery(filters);
             const url = `https://www.indeed.com/jobs?${query}`;
-
+            
             const response = await axios.get(url, {
                 timeout: 10000,
                 headers: {
@@ -824,15 +824,15 @@ class SuperiorJobSearchEngine {
     // بناء استعلام Indeed
     buildIndeedQuery(filters) {
         const params = new URLSearchParams();
-
+        
         let query = 'Arabic AI data annotation machine learning';
         if (filters.keyword) query += ` ${filters.keyword}`;
-
+        
         params.append('q', query);
         params.append('l', 'Remote');
         params.append('fromage', '1'); // آخر يوم
         params.append('sort', 'date');
-
+        
         return params.toString();
     }
 
@@ -846,7 +846,7 @@ class SuperiorJobSearchEngine {
     async searchRemoteOkJobs(filters, searchId) {
         try {
             const url = 'https://remoteok.io/remote-dev-jobs';
-
+            
             const response = await axios.get(url, {
                 timeout: 10000,
                 headers: {
@@ -905,7 +905,7 @@ class SuperiorJobSearchEngine {
     // تحديث إحصائيات البحث
     updateSearchAnalytics(success, responseTime, filters, userId) {
         this.stateManager.analytics.totalSearches++;
-
+        
         if (success) {
             this.stateManager.analytics.successfulSearches++;
         } else {
@@ -964,41 +964,3 @@ module.exports = {
     supabase
 };
 
-class MessageHandler {
-    static formatWelcomeMessage() {
-        return `
-🌟 *مرحباً بك في Arab Annotators Bot v4.0* 🌟
-
-🚀 *البوت الأكثر تطوراً للوظائف العربية في الشرق الأوسط!*
-
-✨ *الميزات المتطورة الجديدة:*
-• 🤖 محرك بحث ذكي فائق الدقة
-• 🌍 دعم شامل لـ 8 دول عربية
-• 📊 إحصائيات وتحليلات متقدمة
-• 🔔 إشعارات ذكية ومخصصة بالكامل
-• ⭐ نظام مفضلة تفاعلي
-• 💎 اشتراك مميز بميزات حصرية
-• 🔍 بحث في أكثر من 100 موقع
-• ⚡ سرعة استجابة أقل من ثانيتين
-
-💼 *نحن الأفضل في:*
-• وظائف الذكاء الاصطناعي العربية
-• تدريب النماذج اللغوية المتقدمة
-• تصنيف البيانات العربية المعقدة
-• التفريغ الصوتي والترجمة الاحترافية
-• مراجعة المحتوى العربي الذكي
-• وظائف العمل عن بُعد المتخصصة
-
-🎯 *الجديد في v4.0:*
-• بحث أذكى بـ 300% من الإصدار السابق
-• دعم مواقع جديدة ومتطورة
-• واجهة مستخدم محسنة بالكامل
-• نظام تنبيهات فوري ومتقدم
-
-🌐 *موقعنا الرسمي:*
-https://arabannotators.store
-
-استخدم القائمة أدناه لاستكشاف جميع الميزات المتطورة! 👇
-`;
-    }
-}
