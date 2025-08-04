@@ -4,8 +4,8 @@
   "description": "Advanced Telegram bot for Arab Annotators - Job notifications with superior search engine",
   "main": "enhanced_bot_v4.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
+    "start": "node enhanced_bot_v4.js",
+    "dev": "nodemon enhanced_bot_v4.js",
     "health": "node health_check.js",
     "deploy": "./deploy.sh",
     "test": "echo \"No tests specified\" && exit 0",

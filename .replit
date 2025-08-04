@@ -5,7 +5,7 @@ run = "npm start"
 channel = "stable-25_05"
 
 [deployment]
-run = ["sh", "-c", "node enhanced_bot_v4.js"]
+run = ["sh", "-c", "node monitor_bot.js"]
 
 [workflows]
 runButton = "Start Bot"
@@ -44,6 +44,15 @@ args = "sleep 3"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node enhanced_bot_v4.js"
+
+[[workflows.workflow]]
+name = "Monitor Bot"
+author = 45971741
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node monitor_bot.js"
 
 [[ports]]
 localPort = 3000
