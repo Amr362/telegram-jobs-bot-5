@@ -36,12 +36,161 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/health', (req, res) => {
-    res.json({ status: 'OK', timestamp: new Date().toISOString() });
+// Routes للخادم
+app.get('/', (req, res) => {
+    res.json({ 
+        status: 'OK',
+        message: 'Arab Annotators Bot v4.0 is running',
+        bot: 'active',
+        timestamp: new Date().toISOString(),
+        features: [
+            'Smart Job Search',
+            'AI-Powered Filtering',
+            'Multi-source Aggregation',
+            'Real-time Notifications'
+        ]
+    });
 });
 
-app.listen(PORT, () => {
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'OK', 
+        bot: 'running',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        memory: process.memoryUsage()
+    });
+});
+
+app.get('/dashboard', (req, res) => {
+    res.send(`
+    <!DOCTYPE html>
+    <html lang="ar" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Arab Annotators Bot v4.0 - Dashboard</title>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+            }
+            .container { 
+                max-width: 800px; 
+                margin: 0 auto; 
+                background: white; 
+                border-radius: 15px; 
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                overflow: hidden;
+            }
+            .header { 
+                background: linear-gradient(45deg, #4CAF50, #45a049); 
+                color: white; 
+                padding: 30px; 
+                text-align: center; 
+            }
+            .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+            .status { padding: 30px; text-align: center; }
+            .status-indicator { 
+                display: inline-block; 
+                width: 15px; 
+                height: 15px; 
+                border-radius: 50%; 
+                background: #4CAF50;
+                margin-left: 10px; 
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse { 
+                0% { opacity: 1; } 
+                50% { opacity: 0.5; } 
+                100% { opacity: 1; } 
+            }
+            .stats { 
+                display: grid; 
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+                gap: 20px; 
+                padding: 30px; 
+            }
+            .stat-card { 
+                background: #f8f9fa; 
+                padding: 20px; 
+                border-radius: 10px; 
+                text-align: center;
+                border-left: 4px solid #4CAF50;
+            }
+            .stat-value { 
+                font-size: 2em; 
+                font-weight: bold; 
+                color: #4CAF50; 
+                margin-bottom: 5px; 
+            }
+            .footer { 
+                background: #333; 
+                color: white; 
+                text-align: center; 
+                padding: 20px; 
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🤖 Arab Annotators Bot v4.0</h1>
+                <p>نظام البحث الذكي عن الوظائف</p>
+            </div>
+            
+            <div class="status">
+                <h2>حالة البوت</h2>
+                <span class="status-indicator"></span>
+                <span>يعمل بشكل طبيعي</span>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value">${Math.floor(process.uptime() / 3600)}h</div>
+                    <p>وقت التشغيل</p>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}</div>
+                    <p>استخدام الذاكرة (MB)</p>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">50+</div>
+                    <p>مصادر البحث</p>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">AI</div>
+                    <p>البحث الذكي</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <p>© 2024 Arab Annotators Bot v4.0 - ${new Date().toLocaleString('ar-EG')}</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `);
+});
+
+app.get('/api/stats', (req, res) => {
+    res.json({
+        analytics: stateManager.analytics,
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`🌐 خادم الصحة يعمل على المنفذ ${PORT}`);
+    console.log(`📊 Dashboard: https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co/dashboard`);
 });
 
 // ===== نظام إدارة الحالة المتقدم =====
