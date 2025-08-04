@@ -8,6 +8,7 @@ channel = "stable-25_05"
 run = ["sh", "-c", "npm start"]
 
 [workflows]
+runButton = "Start Bot"
 
 [[workflows.workflow]]
 name = "Development"
@@ -17,5 +18,14 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
+
+[[workflows.workflow]]
+name = "Start Bot"
+author = 45971741
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node enhanced_bot_v4.js"
 
 
