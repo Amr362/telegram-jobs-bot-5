@@ -8,7 +8,7 @@ const express = require("express");
 require("dotenv").config();
 
 // ===== إعدادات البوت المتقدمة =====
-console.log("🚀 بدء تشغيل Arab Annotators Bot v4.0 - النسخة المتطورة...");
+console.log("🚀 بدء تشغيل Arab Annotators Bot v4.1 - النسخة المحسنة...");
 
 // التحقق من المتغيرات البيئية
 const requiredEnvVars = ['BOT_TOKEN', 'SUPABASE_URL', 'SUPABASE_KEY'];
@@ -22,10 +22,10 @@ for (const envVar of requiredEnvVars) {
 // إعداد البوت والخدمات
 const bot = new TelegramBot(process.env.BOT_TOKEN, { 
     polling: {
-        interval: 1000,
+        interval: 2000,
         autoStart: true,
         params: {
-            timeout: 10
+            timeout: 15
         }
     }
 });
@@ -36,128 +36,89 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/health', (req, res) => {
-    res.json({ status: 'OK', timestamp: new Date().toISOString() });
+app.use(express.json());
+
+app.get('/', (req, res) => {
+    res.json({ 
+        status: 'OK', 
+        message: 'Arab Annotators Bot v4.1 is running',
+        timestamp: new Date().toISOString(),
+        version: '4.1.0'
+    });
 });
 
-app.listen(PORT, () => {
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'OK', 
+        bot: 'running',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        memory: process.memoryUsage()
+    });
+});
+
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`🌐 خادم الصحة يعمل على المنفذ ${PORT}`);
 });
 
-// ===== نظام إدارة الحالة المتقدم =====
-class AdvancedStateManager {
+// ===== نظام إدارة الحالة المحسن =====
+class ImprovedStateManager {
     constructor() {
         this.userStates = new Map();
         this.config = this.loadConfig();
-        this.keywords = this.loadAdvancedKeywords();
+        this.keywords = this.loadKeywords();
         this.regions = this.loadRegions();
-        this.jobCache = new Map();
-        this.searchHistory = new Map();
-        this.analytics = {
-            totalSearches: 0,
-            successfulSearches: 0,
-            failedSearches: 0,
-            averageResponseTime: 0,
-            topKeywords: new Map(),
-            userEngagement: new Map()
-        };
+        this.searchCache = new Map();
+        this.lastCleanup = Date.now();
     }
 
     loadConfig() {
         try {
-            return JSON.parse(fs.readFileSync("./config.json", "utf8"));
+            if (fs.existsSync('./config.json')) {
+                return JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+            }
         } catch (error) {
             console.error("خطأ في قراءة ملف التكوين:", error);
-            return { jobSources: {} };
         }
+
+        // التكوين الافتراضي المحسن
+        return {
+            jobSources: {
+                "AI/ML": [
+                    { name: "Appen", url: "https://appen.com/careers/" },
+                    { name: "Clickworker", url: "https://workplace.clickworker.com/en/jobs" },
+                    { name: "Scale AI", url: "https://scale.com/careers" },
+                    { name: "Lionbridge", url: "https://www.lionbridge.com/join-our-team/" }
+                ],
+                "Freelance": [
+                    { name: "Upwork", url: "https://www.upwork.com/nx/search/jobs/?q=arabic%20ai&sort=recency" },
+                    { name: "Freelancer", url: "https://www.freelancer.com/jobs/arabic-translation/" },
+                    { name: "Fiverr", url: "https://www.fiverr.com/search/gigs?query=arabic%20voice" }
+                ],
+                "Transcription": [
+                    { name: "Rev", url: "https://www.rev.com/freelancers/application" },
+                    { name: "GoTranscript", url: "https://gotranscript.com/transcription-jobs" },
+                    { name: "TranscribeMe", url: "https://workhub.transcribeme.com/" }
+                ]
+            }
+        };
     }
 
-    loadAdvancedKeywords() {
+    loadKeywords() {
         return {
-            // كلمات مفتاحية عربية متقدمة
-            arabic: [
-                "مطلوب لغة عربية", "Arabic Language", "Arabic Annotator", "مُعلق بيانات عربي",
-                "الشرق الأوسط", "AI Training Arabic", "Voice Actor Arabic", "ممثل صوت عربي",
-                "Transcription Arabic", "تفريغ صوت", "Voice Over Arabic", "تعليق صوتي عربي",
-                "Data Collection Arabic", "تدريب الذكاء الاصطناعي للغة العربية",
-                "Arabic NLP", "Arabic AI", "Middle East", "Arabic Speaker", "متحدث عربي",
-                "Arabic Data", "Arabic Content", "Arabic Translation", "ترجمة عربية",
-                "محتوى عربي", "مراجعة نصوص", "تدقيق لغوي", "كاتب محتوى عربي"
-            ],
-            // كلمات تقنية متخصصة
-            technical: [
-                "Machine Learning", "تعلم الآلة", "Deep Learning", "التعلم العميق",
-                "Natural Language Processing", "معالجة اللغة الطبيعية", "Computer Vision", "رؤية الحاسوب",
-                "Data Science", "علم البيانات", "Big Data", "البيانات الضخمة",
-                "Neural Networks", "الشبكات العصبية", "Algorithm", "خوارزمية",
-                "Python", "TensorFlow", "PyTorch", "Keras", "Scikit-learn"
-            ],
-            // أنواع الوظائف
-            jobTypes: [
-                "Remote", "عن بُعد", "Freelance", "عمل حر", "Part-time", "دوام جزئي",
-                "Full-time", "دوام كامل", "Contract", "عقد", "Internship", "تدريب",
-                "Entry Level", "مستوى مبتدئ", "Senior", "كبير", "Lead", "قائد فريق"
-            ],
-            // مهارات مطلوبة
-            skills: [
-                "Annotation", "تعليق", "Labeling", "تصنيف", "Tagging", "وسم",
-                "Quality Assurance", "ضمان الجودة", "Data Entry", "إدخال البيانات",
-                "Content Moderation", "إشراف المحتوى", "Proofreading", "تدقيق",
-                "Linguistics", "لسانيات", "Phonetics", "صوتيات"
-            ]
+            arabic: ["arabic", "عربي", "عربية", "arab", "middle east", "الشرق الأوسط"],
+            ai: ["ai", "artificial intelligence", "machine learning", "ذكاء اصطناعي", "تعلم آلة"],
+            jobs: ["annotation", "transcription", "voice", "data", "تعليق", "تفريغ", "صوت", "بيانات"],
+            remote: ["remote", "work from home", "عن بعد", "العمل من المنزل"]
         };
     }
 
     loadRegions() {
         return [
-            { 
-                name: "مصر", code: "egypt", flag: "🇪🇬", 
-                keywords: ["Egypt", "Cairo", "مصر", "القاهرة", "الإسكندرية", "الجيزة"],
-                timezone: "Africa/Cairo",
-                currency: "EGP"
-            },
-            { 
-                name: "السعودية", code: "saudi", flag: "🇸🇦", 
-                keywords: ["Saudi", "Riyadh", "السعودية", "الرياض", "جدة", "الدمام"],
-                timezone: "Asia/Riyadh",
-                currency: "SAR"
-            },
-            { 
-                name: "الإمارات", code: "uae", flag: "🇦🇪", 
-                keywords: ["UAE", "Dubai", "الإمارات", "دبي", "أبوظبي", "الشارقة"],
-                timezone: "Asia/Dubai",
-                currency: "AED"
-            },
-            { 
-                name: "المغرب", code: "morocco", flag: "🇲🇦", 
-                keywords: ["Morocco", "Casablanca", "المغرب", "الدار البيضاء", "الرباط"],
-                timezone: "Africa/Casablanca",
-                currency: "MAD"
-            },
-            { 
-                name: "الأردن", code: "jordan", flag: "🇯🇴", 
-                keywords: ["Jordan", "Amman", "الأردن", "عمان", "إربد"],
-                timezone: "Asia/Amman",
-                currency: "JOD"
-            },
-            { 
-                name: "لبنان", code: "lebanon", flag: "🇱🇧", 
-                keywords: ["Lebanon", "Beirut", "لبنان", "بيروت", "طرابلس"],
-                timezone: "Asia/Beirut",
-                currency: "LBP"
-            },
-            { 
-                name: "الكويت", code: "kuwait", flag: "🇰🇼", 
-                keywords: ["Kuwait", "الكويت", "مدينة الكويت"],
-                timezone: "Asia/Kuwait",
-                currency: "KWD"
-            },
-            { 
-                name: "قطر", code: "qatar", flag: "🇶🇦", 
-                keywords: ["Qatar", "Doha", "قطر", "الدوحة"],
-                timezone: "Asia/Qatar",
-                currency: "QAR"
-            }
+            { name: "مصر", code: "egypt", flag: "🇪🇬" },
+            { name: "السعودية", code: "saudi", flag: "🇸🇦" },  
+            { name: "الإمارات", code: "uae", flag: "🇦🇪" },
+            { name: "المغرب", code: "morocco", flag: "🇲🇦" }
         ];
     }
 
@@ -165,31 +126,9 @@ class AdvancedStateManager {
         if (!this.userStates.has(chatId)) {
             this.userStates.set(chatId, {
                 currentMenu: 'main',
-                favorites: [],
                 searchHistory: [],
-                notifications: {
-                    enabled: false,
-                    regions: [],
-                    keywords: [],
-                    schedule: '09:00'
-                },
-                subscription: {
-                    type: 'free',
-                    expiry: null,
-                    features: ['basic_search', 'notifications']
-                },
-                preferences: {
-                    language: 'ar',
-                    resultsPerPage: 10,
-                    theme: 'default',
-                    sortBy: 'relevance'
-                },
-                analytics: {
-                    totalSearches: 0,
-                    lastActive: new Date(),
-                    favoriteCategories: [],
-                    searchPatterns: []
-                }
+                notifications: false,
+                lastActive: new Date()
             });
         }
         return this.userStates.get(chatId);
@@ -198,764 +137,482 @@ class AdvancedStateManager {
     updateUserState(chatId, updates) {
         const state = this.getUserState(chatId);
         Object.assign(state, updates);
-        state.analytics.lastActive = new Date();
+        state.lastActive = new Date();
         this.userStates.set(chatId, state);
     }
 
-    // حفظ البيانات في Supabase
-    async saveUserData(chatId, userData) {
-        try {
-            const { data, error } = await supabase
-                .from('users')
-                .upsert({
-                    chat_id: chatId,
-                    user_data: userData,
-                    updated_at: new Date()
-                });
-            
-            if (error) throw error;
-            return true;
-        } catch (error) {
-            console.error('خطأ في حفظ بيانات المستخدم:', error);
-            return false;
-        }
-    }
-
-    // استرجاع البيانات من Supabase
-    async loadUserData(chatId) {
-        try {
-            const { data, error } = await supabase
-                .from('users')
-                .select('user_data')
-                .eq('chat_id', chatId)
-                .single();
-            
-            if (error) throw error;
-            return data?.user_data || null;
-        } catch (error) {
-            console.error('خطأ في تحميل بيانات المستخدم:', error);
-            return null;
+    // تنظيف الكاش كل ساعة
+    cleanupCache() {
+        const now = Date.now();
+        if (now - this.lastCleanup > 3600000) { // ساعة واحدة
+            this.searchCache.clear();
+            this.lastCleanup = now;
+            console.log("🧹 تم تنظيف الكاش");
         }
     }
 }
 
-// ===== محرك البحث المتطور - أفضل من جوجل =====
-class SuperiorJobSearchEngine {
+// ===== محرك البحث المحسن =====
+class ImprovedJobSearchEngine {
     constructor(stateManager) {
         this.stateManager = stateManager;
-        this.searchCache = new Map();
-        this.rateLimiter = new Map();
         this.userAgents = [
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         ];
+        this.requestDelay = 2000; // تأخير بين الطلبات
+        this.maxRetries = 2;
     }
 
-    // البحث الذكي المتطور
-    async intelligentSearch(filters = {}, userId = null) {
+    // البحث الذكي المحسن
+    async smartSearch(filters = {}) {
         const startTime = Date.now();
-        const searchId = this.generateSearchId();
-        
-        console.log(`🔍 [${searchId}] بدء البحث الذكي المتطور...`);
-        
+        console.log("🔍 بدء البحث الذكي المحسن...");
+
         try {
-            // فحص الكاش أولاً
-            const cacheKey = this.generateCacheKey(filters);
-            if (this.searchCache.has(cacheKey)) {
-                const cached = this.searchCache.get(cacheKey);
-                if (Date.now() - cached.timestamp < 300000) { // 5 دقائق
-                    console.log(`💾 [${searchId}] استخدام النتائج المحفوظة`);
+            // فحص الكاش
+            const cacheKey = JSON.stringify(filters);
+            if (this.stateManager.searchCache.has(cacheKey)) {
+                const cached = this.stateManager.searchCache.get(cacheKey);
+                if (Date.now() - cached.timestamp < 600000) { // 10 دقائق
+                    console.log("💾 استخدام النتائج المحفوظة");
                     return cached.results;
                 }
             }
 
-            // البحث المتوازي في جميع المصادر
-            const searchPromises = [];
-            
-            // البحث في المصادر التقليدية
+            const allJobs = [];
+            const promises = [];
+
+            // البحث في جميع المصادر
             Object.entries(this.stateManager.config.jobSources).forEach(([category, sites]) => {
-                sites.forEach(site => {
-                    searchPromises.push(
-                        this.advancedSiteSearch(site, category, filters, searchId)
+                sites.forEach((site, index) => {
+                    // تأخير تدريجي لتجنب الحظر
+                    const delay = index * this.requestDelay;
+                    promises.push(
+                        new Promise(resolve => {
+                            setTimeout(async () => {
+                                try {
+                                    const jobs = await this.searchSite(site, category, filters);
+                                    resolve(jobs);
+                                } catch (error) {
+                                    console.error(`❌ خطأ في ${site.name}:`, error.message);
+                                    resolve([]);
+                                }
+                            }, delay);
+                        })
                     );
                 });
             });
 
-            // البحث في مصادر إضافية متقدمة
-            searchPromises.push(
-                this.searchLinkedInJobs(filters, searchId),
-                this.searchIndeedJobs(filters, searchId),
-                this.searchGlassdoorJobs(filters, searchId),
-                this.searchRemoteOkJobs(filters, searchId),
-                this.searchAngelListJobs(filters, searchId)
-            );
-
             // انتظار جميع النتائج
-            const allResults = await Promise.allSettled(searchPromises);
-            
-            // جمع وتنظيف النتائج
-            let combinedResults = [];
-            allResults.forEach(result => {
-                if (result.status === 'fulfilled' && Array.isArray(result.value)) {
-                    combinedResults.push(...result.value);
-                }
-            });
+            const results = await Promise.all(promises);
+            results.forEach(jobs => allJobs.push(...jobs));
 
-            // تطبيق الذكاء الاصطناعي للتصفية والترتيب
-            const intelligentResults = await this.applyAIFiltering(combinedResults, filters);
-            
+            // تصفية وترتيب النتائج
+            const filteredJobs = this.filterAndSortJobs(allJobs, filters);
+
             // حفظ في الكاش
-            this.searchCache.set(cacheKey, {
-                results: intelligentResults,
+            this.stateManager.searchCache.set(cacheKey, {
+                results: filteredJobs,
                 timestamp: Date.now()
             });
 
-            // تحديث الإحصائيات
-            const responseTime = Date.now() - startTime;
-            this.updateSearchAnalytics(true, responseTime, filters, userId);
+            // تنظيف الكاش
+            this.stateManager.cleanupCache();
 
-            console.log(`✅ [${searchId}] البحث اكتمل في ${responseTime}ms - ${intelligentResults.length} نتيجة عالية الجودة`);
-            
-            return intelligentResults;
+            const responseTime = Date.now() - startTime;
+            console.log(`✅ البحث اكتمل في ${responseTime}ms - ${filteredJobs.length} نتيجة`);
+
+            return filteredJobs;
 
         } catch (error) {
-            console.error(`❌ [${searchId}] خطأ في البحث الذكي:`, error);
-            this.updateSearchAnalytics(false, Date.now() - startTime, filters, userId);
+            console.error("❌ خطأ في البحث الذكي:", error);
             return [];
         }
     }
 
-    // البحث المتطور في المواقع
-    async advancedSiteSearch(site, category, filters, searchId) {
-        try {
-            const userAgent = this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
-            
-            const response = await axios.get(site.url, {
-                timeout: 10000,
-                headers: {
-                    'User-Agent': userAgent,
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                    'Accept-Language': 'en-US,en;q=0.5,ar;q=0.3',
-                    'Accept-Encoding': 'gzip, deflate',
-                    'Connection': 'keep-alive',
-                    'Upgrade-Insecure-Requests': '1'
-                }
-            });
+    // البحث في موقع واحد
+    async searchSite(site, category, filters) {
+        let retries = 0;
 
-            const $ = cheerio.load(response.data);
-            const jobs = [];
+        while (retries < this.maxRetries) {
+            try {
+                console.log(`🔍 البحث في ${site.name}...`);
 
-            // محددات متقدمة لاستخراج الوظائف
-            const selectors = this.getAdvancedSelectors(site.name);
-            
-            selectors.forEach(selector => {
-                $(selector.container).each((i, element) => {
-                    const title = this.extractText($, element, selector.title);
-                    const link = this.extractLink($, element, selector.link, site.url);
-                    const company = this.extractText($, element, selector.company);
-                    const location = this.extractText($, element, selector.location);
-                    const salary = this.extractText($, element, selector.salary);
-                    const description = this.extractText($, element, selector.description);
+                const userAgent = this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
 
-                    if (this.isHighQualityJob(title, link, company, filters)) {
-                        const job = {
-                            title: title,
-                            url: link,
-                            company: company || site.name,
-                            location: location,
-                            salary: salary,
-                            description: description,
-                            source: site.name,
-                            category: category,
-                            matchScore: this.calculateAdvancedMatchScore(title, description, company, filters),
-                            qualityScore: this.calculateQualityScore(title, description, company, salary),
-                            dateFound: new Date().toISOString(),
-                            searchId: searchId
-                        };
-                        
-                        jobs.push(job);
+                const response = await axios.get(site.url, {
+                    timeout: 15000,
+                    headers: {
+                        'User-Agent': userAgent,
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                        'Accept-Language': 'en-US,en;q=0.5,ar;q=0.3',
+                        'Connection': 'keep-alive',
+                        'Cache-Control': 'no-cache'
+                    },
+                    maxRedirects: 5,
+                    validateStatus: function (status) {
+                        return status >= 200 && status < 400;
                     }
                 });
-            });
 
-            console.log(`📊 [${searchId}] ${site.name}: ${jobs.length} وظائف عالية الجودة`);
-            return jobs.slice(0, 10); // أفضل 10 نتائج لكل موقع
+                const $ = cheerio.load(response.data);
+                const jobs = this.extractJobs($, site, category);
 
-        } catch (error) {
-            console.error(`❌ [${searchId}] خطأ في البحث في ${site.name}:`, error.message);
-            return [];
+                console.log(`✅ وجدت ${jobs.length} وظائف في ${site.name}`);
+                return jobs.slice(0, 5); // أفضل 5 نتائج لكل موقع
+
+            } catch (error) {
+                retries++;
+
+                if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+                    console.error(`❌ خطأ في الاتصال بـ ${site.name}: الموقع غير متاح`);
+                    break;
+                } else if (error.response?.status === 403 || error.response?.status === 429) {
+                    console.error(`❌ تم حظر الوصول إلى ${site.name}: ${error.response.status}`);
+                    break;
+                } else if (retries < this.maxRetries) {
+                    console.log(`⏳ إعادة المحاولة ${retries}/${this.maxRetries} لـ ${site.name}`);
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                } else {
+                    console.error(`❌ فشل نهائي في ${site.name}:`, error.message);
+                }
+            }
         }
+
+        return [];
     }
 
-    // محددات متقدمة لكل موقع
-    getAdvancedSelectors(siteName) {
-        const selectors = {
-            'LinkedIn Jobs': [
-                {
-                    container: '.job-search-card, .jobs-search__results-list li',
-                    title: '.job-search-card__title a, h3 a',
-                    link: '.job-search-card__title a, h3 a',
-                    company: '.job-search-card__subtitle-primary-grouping strong, .job-search-card__subtitle',
-                    location: '.job-search-card__subtitle-secondary-grouping, .job-search-card__location',
-                    description: '.job-search-card__snippet'
-                }
-            ],
-            'Upwork': [
-                {
-                    container: '[data-test="JobTile"], .job-tile',
-                    title: '[data-test="JobTileTitle"] a, .job-tile-title a',
-                    link: '[data-test="JobTileTitle"] a, .job-tile-title a',
-                    company: '[data-test="ClientInfo"], .client-info',
-                    description: '[data-test="JobDescription"], .job-tile-description'
-                }
-            ],
-            'Indeed': [
-                {
-                    container: '.jobsearch-SerpJobCard, [data-testid="job-result"]',
-                    title: '.jobTitle a, [data-testid="job-title"] a',
-                    link: '.jobTitle a, [data-testid="job-title"] a',
-                    company: '.companyName, [data-testid="company-name"]',
-                    location: '.companyLocation, [data-testid="job-location"]',
-                    salary: '.salary-snippet, [data-testid="salary-snippet"]',
-                    description: '.summary, [data-testid="job-snippet"]'
-                }
-            ]
-        };
+    // استخراج الوظائف من HTML
+    extractJobs($, site, category) {
+        const jobs = [];
+        const selectors = this.getSelectors(site.name);
 
-        return selectors[siteName] || [
+        selectors.forEach(selector => {
+            $(selector.container).each((i, element) => {
+                if (i >= 10) return false; // حد أقصى 10 وظائف لكل محدد
+
+                const title = this.extractText($, element, selector.title);
+                const link = this.extractLink($, element, selector.link, site.url);
+                const company = this.extractText($, element, selector.company);
+                const description = this.extractText($, element, selector.description);
+
+                if (this.isValidJob(title, link, description)) {
+                    jobs.push({
+                        title: title.substring(0, 200),
+                        url: link,
+                        company: company || site.name,
+                        description: description.substring(0, 500),
+                        source: site.name,
+                        category: category,
+                        score: this.calculateScore(title, description),
+                        dateFound: new Date().toISOString()
+                    });
+                }
+            });
+        });
+
+        return jobs;
+    }
+
+    // محددات لاستخراج البيانات
+    getSelectors(siteName) {
+        const commonSelectors = [
             {
-                container: 'article, .job, .position, .listing',
-                title: 'h1, h2, h3, .title, .job-title',
-                link: 'h1 a, h2 a, h3 a, .title a, .job-title a',
+                container: 'article, .job, .listing, .position, .vacancy',
+                title: 'h1, h2, h3, .title, .job-title, .position-title',
+                link: 'a[href]',
                 company: '.company, .employer, .organization',
-                location: '.location, .city, .country',
-                description: '.description, .summary, .excerpt, p'
+                description: '.description, .summary, p'
+            },
+            {
+                container: 'li, .card, .item',
+                title: '.title, .heading, h3, h4',
+                link: 'a',
+                company: '.company, .org',
+                description: '.text, .content'
             }
         ];
+
+        // محددات خاصة لمواقع معينة
+        const specificSelectors = {
+            'Upwork': [{
+                container: '[data-test="JobTile"]',
+                title: '[data-test="JobTileTitle"] a',
+                link: '[data-test="JobTileTitle"] a',
+                description: '[data-test="JobDescription"]'
+            }],
+            'Appen': [{
+                container: '.job-listing, .career-item',
+                title: '.job-title, .career-title',
+                link: '.job-title a, .career-title a',
+                description: '.job-description'
+            }]
+        };
+
+        return specificSelectors[siteName] || commonSelectors;
     }
 
-    // استخراج النص بذكاء
+    // استخراج النص
     extractText($, element, selector) {
         if (!selector) return '';
         const found = $(element).find(selector).first();
         return found.length ? found.text().trim() : '';
     }
 
-    // استخراج الرابط بذكاء
+    // استخراج الرابط
     extractLink($, element, selector, baseUrl) {
         if (!selector) return '';
         const found = $(element).find(selector).first();
         const href = found.attr('href');
         if (!href) return '';
-        
-        return href.startsWith('http') ? href : new URL(href, baseUrl).toString();
-    }
 
-    // فحص جودة الوظيفة
-    isHighQualityJob(title, link, company, filters) {
-        if (!title || !link || title.length < 10) return false;
-        
-        const titleLower = title.toLowerCase();
-        
-        // فحص الكلمات المفتاحية المتقدم
-        const hasRelevantKeywords = this.checkAdvancedKeywords(titleLower, filters);
-        
-        // فحص جودة العنوان
-        const hasQualityIndicators = this.checkQualityIndicators(title, company);
-        
-        // فحص عدم وجود كلمات مرفوضة
-        const hasNoSpamWords = this.checkNoSpamWords(titleLower);
-        
-        return hasRelevantKeywords && hasQualityIndicators && hasNoSpamWords;
-    }
-
-    // فحص الكلمات المفتاحية المتقدم
-    checkAdvancedKeywords(titleLower, filters) {
-        const allKeywords = [
-            ...this.stateManager.keywords.arabic,
-            ...this.stateManager.keywords.technical,
-            ...this.stateManager.keywords.jobTypes,
-            ...this.stateManager.keywords.skills
-        ];
-
-        let keywordScore = 0;
-        allKeywords.forEach(keyword => {
-            if (titleLower.includes(keyword.toLowerCase())) {
-                keywordScore += this.getKeywordWeight(keyword);
-            }
-        });
-
-        // فحص المرشحات المحددة
-        if (filters.keyword) {
-            if (titleLower.includes(filters.keyword.toLowerCase())) {
-                keywordScore += 20;
-            }
+        try {
+            return href.startsWith('http') ? href : new URL(href, baseUrl).toString();
+        } catch {
+            return '';
         }
-
-        if (filters.region) {
-            const region = this.stateManager.regions.find(r => r.code === filters.region);
-            if (region) {
-                region.keywords.forEach(regionKeyword => {
-                    if (titleLower.includes(regionKeyword.toLowerCase())) {
-                        keywordScore += 15;
-                    }
-                });
-            }
-        }
-
-        return keywordScore >= 10; // الحد الأدنى للقبول
     }
 
-    // وزن الكلمات المفتاحية
-    getKeywordWeight(keyword) {
-        const weights = {
-            'arabic': 25, 'عربي': 25, 'عربية': 25,
-            'ai': 20, 'artificial intelligence': 20, 'ذكاء اصطناعي': 20,
-            'machine learning': 18, 'تعلم الآلة': 18,
-            'data': 15, 'بيانات': 15,
-            'remote': 12, 'عن بُعد': 12,
-            'annotation': 15, 'تعليق': 15,
-            'transcription': 15, 'تفريغ': 15
-        };
-        
-        return weights[keyword.toLowerCase()] || 5;
+    // التحقق من صحة الوظيفة
+    isValidJob(title, link, description) {
+        if (!title || !link || title.length < 5) return false;
+
+        const text = `${title} ${description}`.toLowerCase();
+
+        // فحص الكلمات المفتاحية
+        const hasKeywords = Object.values(this.stateManager.keywords).some(keywords =>
+            keywords.some(keyword => text.includes(keyword.toLowerCase()))
+        );
+
+        return hasKeywords;
     }
 
-    // فحص مؤشرات الجودة
-    checkQualityIndicators(title, company) {
-        const qualityIndicators = [
-            /\$\d+/,  // راتب محدد
-            /\d+\s*(hour|hr|month|year)/i,  // معدل زمني
-            /full.?time|part.?time|contract/i,  // نوع العمل
-            /senior|lead|manager|director/i,  // مستوى الخبرة
-            /remote|work.?from.?home/i  // عمل عن بُعد
-        ];
-
-        let qualityScore = 0;
-        qualityIndicators.forEach(indicator => {
-            if (indicator.test(title)) qualityScore += 5;
-        });
-
-        // شركات موثوقة
-        if (company) {
-            const trustedCompanies = ['google', 'microsoft', 'amazon', 'meta', 'apple', 'openai', 'anthropic'];
-            if (trustedCompanies.some(trusted => company.toLowerCase().includes(trusted))) {
-                qualityScore += 15;
-            }
-        }
-
-        return qualityScore >= 5;
-    }
-
-    // فحص عدم وجود كلمات سبام
-    checkNoSpamWords(titleLower) {
-        const spamWords = [
-            'make money fast', 'easy money', 'no experience needed',
-            'work from home scam', 'pyramid scheme', 'multi level marketing',
-            'get rich quick', 'guaranteed income', 'no skills required'
-        ];
-
-        return !spamWords.some(spam => titleLower.includes(spam));
-    }
-
-    // حساب نقاط التطابق المتقدم
-    calculateAdvancedMatchScore(title, description, company, filters) {
+    // حساب نقاط الوظيفة
+    calculateScore(title, description) {
         let score = 0;
-        const text = `${title} ${description} ${company}`.toLowerCase();
+        const text = `${title} ${description}`.toLowerCase();
 
         // نقاط الكلمات المفتاحية
-        Object.values(this.stateManager.keywords).flat().forEach(keyword => {
-            if (text.includes(keyword.toLowerCase())) {
-                score += this.getKeywordWeight(keyword);
-            }
-        });
-
-        // نقاط المرشحات
-        if (filters.keyword && text.includes(filters.keyword.toLowerCase())) {
-            score += 30;
-        }
-
-        if (filters.region) {
-            const region = this.stateManager.regions.find(r => r.code === filters.region);
-            if (region) {
-                region.keywords.forEach(regionKeyword => {
-                    if (text.includes(regionKeyword.toLowerCase())) {
-                        score += 20;
-                    }
-                });
-            }
-        }
-
-        // نقاط إضافية للجودة
-        if (title.length > 20 && title.length < 100) score += 5;
-        if (description && description.length > 50) score += 5;
-        if (company && company.length > 3) score += 5;
-
-        return Math.min(score, 100); // الحد الأقصى 100
-    }
-
-    // حساب نقاط الجودة
-    calculateQualityScore(title, description, company, salary) {
-        let score = 0;
-
-        // جودة العنوان
-        if (title && title.length >= 10 && title.length <= 100) score += 20;
-        if (title && !/[!@#$%^&*()_+={}\[\]|\\:";'<>?,./]/.test(title)) score += 10;
-
-        // جودة الوصف
-        if (description && description.length >= 50) score += 15;
-        if (description && description.length >= 200) score += 10;
-
-        // وجود الشركة
-        if (company && company.length >= 3) score += 15;
-
-        // وجود الراتب
-        if (salary && salary.trim().length > 0) score += 20;
-
-        // مؤشرات احترافية
-        const professionalWords = ['experience', 'skills', 'requirements', 'benefits', 'خبرة', 'مهارات', 'متطلبات', 'مزايا'];
-        professionalWords.forEach(word => {
-            if (description && description.toLowerCase().includes(word)) score += 2;
+        Object.entries(this.stateManager.keywords).forEach(([category, keywords]) => {
+            keywords.forEach(keyword => {
+                if (text.includes(keyword.toLowerCase())) {
+                    score += category === 'arabic' ? 20 : 10;
+                }
+            });
         });
 
         return Math.min(score, 100);
     }
 
-    // تطبيق الذكاء الاصطناعي للتصفية
-    async applyAIFiltering(results, filters) {
-        // إزالة المكررات المتقدمة
-        const uniqueResults = this.removeDuplicatesAdvanced(results);
-        
-        // ترتيب بالذكاء الاصطناعي
-        const sortedResults = this.aiSort(uniqueResults, filters);
-        
-        // تطبيق مرشحات الجودة
-        const qualityFiltered = sortedResults.filter(job => job.qualityScore >= 30);
-        
-        // تحديد التنوع
-        const diverseResults = this.ensureDiversity(qualityFiltered);
-        
-        return diverseResults.slice(0, 50); // أفضل 50 نتيجة
-    }
+    // تصفية وترتيب النتائج
+    filterAndSortJobs(jobs, filters) {
+        // إزالة المكررات
+        const unique = jobs.filter((job, index, self) => 
+            index === self.findIndex(j => j.title === job.title && j.company === job.company)
+        );
 
-    // إزالة المكررات المتقدمة
-    removeDuplicatesAdvanced(results) {
-        const seen = new Set();
-        return results.filter(job => {
-            const signature = this.generateJobSignature(job);
-            if (seen.has(signature)) return false;
-            seen.add(signature);
-            return true;
-        });
-    }
+        // ترتيب حسب النقاط
+        const sorted = unique.sort((a, b) => b.score - a.score);
 
-    // توليد بصمة الوظيفة
-    generateJobSignature(job) {
-        const title = job.title.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const company = (job.company || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-        return `${title}-${company}`;
-    }
+        // تطبيق المرشحات
+        let filtered = sorted;
 
-    // ترتيب بالذكاء الاصطناعي
-    aiSort(results, filters) {
-        return results.sort((a, b) => {
-            // الوزن المركب
-            const scoreA = (a.matchScore * 0.4) + (a.qualityScore * 0.3) + (this.getRecencyScore(a) * 0.2) + (this.getPopularityScore(a) * 0.1);
-            const scoreB = (b.matchScore * 0.4) + (b.qualityScore * 0.3) + (this.getRecencyScore(b) * 0.2) + (this.getPopularityScore(b) * 0.1);
-            
-            return scoreB - scoreA;
-        });
-    }
-
-    // نقاط الحداثة
-    getRecencyScore(job) {
-        const now = new Date();
-        const jobDate = new Date(job.dateFound);
-        const hoursDiff = (now - jobDate) / (1000 * 60 * 60);
-        
-        if (hoursDiff < 1) return 100;
-        if (hoursDiff < 24) return 80;
-        if (hoursDiff < 168) return 60; // أسبوع
-        return 40;
-    }
-
-    // نقاط الشعبية
-    getPopularityScore(job) {
-        const popularSources = ['linkedin', 'indeed', 'glassdoor', 'google'];
-        const sourceLower = job.source.toLowerCase();
-        
-        if (popularSources.some(source => sourceLower.includes(source))) return 80;
-        return 50;
-    }
-
-    // ضمان التنوع
-    ensureDiversity(results) {
-        const diverse = [];
-        const categoryCounts = {};
-        const sourceCounts = {};
-        
-        results.forEach(job => {
-            const category = job.category || 'other';
-            const source = job.source || 'unknown';
-            
-            categoryCounts[category] = (categoryCounts[category] || 0);
-            sourceCounts[source] = (sourceCounts[source] || 0);
-            
-            // حد أقصى 10 وظائف لكل فئة و 5 لكل مصدر
-            if (categoryCounts[category] < 10 && sourceCounts[source] < 5) {
-                diverse.push(job);
-                categoryCounts[category]++;
-                sourceCounts[source]++;
-            }
-        });
-        
-        return diverse;
-    }
-
-    // البحث في LinkedIn
-    async searchLinkedInJobs(filters, searchId) {
-        try {
-            const query = this.buildLinkedInQuery(filters);
-            const url = `https://www.linkedin.com/jobs/search/?${query}`;
-            
-            const response = await axios.get(url, {
-                timeout: 10000,
-                headers: {
-                    'User-Agent': this.userAgents[0],
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-                }
-            });
-
-            const $ = cheerio.load(response.data);
-            const jobs = [];
-
-            $('.job-search-card').each((i, element) => {
-                const title = $(element).find('.job-search-card__title a').text().trim();
-                const link = $(element).find('.job-search-card__title a').attr('href');
-                const company = $(element).find('.job-search-card__subtitle-primary-grouping').text().trim();
-                const location = $(element).find('.job-search-card__subtitle-secondary-grouping').text().trim();
-
-                if (this.isHighQualityJob(title, link, company, filters)) {
-                    jobs.push({
-                        title,
-                        url: link?.startsWith('http') ? link : `https://www.linkedin.com${link}`,
-                        company,
-                        location,
-                        source: 'LinkedIn',
-                        category: 'professional',
-                        matchScore: this.calculateAdvancedMatchScore(title, '', company, filters),
-                        qualityScore: this.calculateQualityScore(title, '', company, ''),
-                        dateFound: new Date().toISOString(),
-                        searchId
-                    });
-                }
-            });
-
-            return jobs.slice(0, 15);
-        } catch (error) {
-            console.error(`❌ [${searchId}] خطأ في البحث في LinkedIn:`, error.message);
-            return [];
-        }
-    }
-
-    // بناء استعلام LinkedIn
-    buildLinkedInQuery(filters) {
-        const params = new URLSearchParams();
-        
-        let keywords = 'Arabic AI data annotation';
-        if (filters.keyword) keywords += ` ${filters.keyword}`;
-        
-        params.append('keywords', keywords);
-        params.append('location', 'Worldwide');
-        params.append('f_TPR', 'r86400'); // آخر 24 ساعة
-        params.append('f_WT', '2'); // عمل عن بُعد
-        
-        return params.toString();
-    }
-
-    // البحث في Indeed
-    async searchIndeedJobs(filters, searchId) {
-        try {
-            const query = this.buildIndeedQuery(filters);
-            const url = `https://www.indeed.com/jobs?${query}`;
-            
-            const response = await axios.get(url, {
-                timeout: 10000,
-                headers: {
-                    'User-Agent': this.userAgents[1]
-                }
-            });
-
-            const $ = cheerio.load(response.data);
-            const jobs = [];
-
-            $('[data-testid="job-result"]').each((i, element) => {
-                const title = $(element).find('[data-testid="job-title"] a').text().trim();
-                const link = $(element).find('[data-testid="job-title"] a').attr('href');
-                const company = $(element).find('[data-testid="company-name"]').text().trim();
-                const location = $(element).find('[data-testid="job-location"]').text().trim();
-                const salary = $(element).find('[data-testid="salary-snippet"]').text().trim();
-
-                if (this.isHighQualityJob(title, link, company, filters)) {
-                    jobs.push({
-                        title,
-                        url: link?.startsWith('http') ? link : `https://www.indeed.com${link}`,
-                        company,
-                        location,
-                        salary,
-                        source: 'Indeed',
-                        category: 'general',
-                        matchScore: this.calculateAdvancedMatchScore(title, '', company, filters),
-                        qualityScore: this.calculateQualityScore(title, '', company, salary),
-                        dateFound: new Date().toISOString(),
-                        searchId
-                    });
-                }
-            });
-
-            return jobs.slice(0, 15);
-        } catch (error) {
-            console.error(`❌ [${searchId}] خطأ في البحث في Indeed:`, error.message);
-            return [];
-        }
-    }
-
-    // بناء استعلام Indeed
-    buildIndeedQuery(filters) {
-        const params = new URLSearchParams();
-        
-        let query = 'Arabic AI data annotation machine learning';
-        if (filters.keyword) query += ` ${filters.keyword}`;
-        
-        params.append('q', query);
-        params.append('l', 'Remote');
-        params.append('fromage', '1'); // آخر يوم
-        params.append('sort', 'date');
-        
-        return params.toString();
-    }
-
-    // البحث في Glassdoor
-    async searchGlassdoorJobs(filters, searchId) {
-        // تنفيذ مشابه للمواقع الأخرى
-        return [];
-    }
-
-    // البحث في Remote OK
-    async searchRemoteOkJobs(filters, searchId) {
-        try {
-            const url = 'https://remoteok.io/remote-dev-jobs';
-            
-            const response = await axios.get(url, {
-                timeout: 10000,
-                headers: {
-                    'User-Agent': this.userAgents[2]
-                }
-            });
-
-            const $ = cheerio.load(response.data);
-            const jobs = [];
-
-            $('.job').each((i, element) => {
-                const title = $(element).find('.company_and_position h2').text().trim();
-                const link = $(element).find('a').attr('href');
-                const company = $(element).find('.company h3').text().trim();
-                const tags = $(element).find('.tags .tag').map((i, el) => $(el).text()).get().join(' ');
-
-                if (this.isHighQualityJob(title, link, company, filters)) {
-                    jobs.push({
-                        title,
-                        url: link?.startsWith('http') ? link : `https://remoteok.io${link}`,
-                        company,
-                        description: tags,
-                        source: 'Remote OK',
-                        category: 'remote',
-                        matchScore: this.calculateAdvancedMatchScore(title, tags, company, filters),
-                        qualityScore: this.calculateQualityScore(title, tags, company, ''),
-                        dateFound: new Date().toISOString(),
-                        searchId
-                    });
-                }
-            });
-
-            return jobs.slice(0, 10);
-        } catch (error) {
-            console.error(`❌ [${searchId}] خطأ في البحث في Remote OK:`, error.message);
-            return [];
-        }
-    }
-
-    // البحث في AngelList
-    async searchAngelListJobs(filters, searchId) {
-        // تنفيذ مشابه
-        return [];
-    }
-
-    // توليد معرف البحث
-    generateSearchId() {
-        return Math.random().toString(36).substr(2, 9);
-    }
-
-    // توليد مفتاح الكاش
-    generateCacheKey(filters) {
-        return JSON.stringify(filters);
-    }
-
-    // تحديث إحصائيات البحث
-    updateSearchAnalytics(success, responseTime, filters, userId) {
-        this.stateManager.analytics.totalSearches++;
-        
-        if (success) {
-            this.stateManager.analytics.successfulSearches++;
-        } else {
-            this.stateManager.analytics.failedSearches++;
-        }
-
-        // تحديث متوسط وقت الاستجابة
-        const currentAvg = this.stateManager.analytics.averageResponseTime;
-        const totalSearches = this.stateManager.analytics.totalSearches;
-        this.stateManager.analytics.averageResponseTime = 
-            ((currentAvg * (totalSearches - 1)) + responseTime) / totalSearches;
-
-        // تتبع الكلمات المفتاحية الشائعة
         if (filters.keyword) {
             const keyword = filters.keyword.toLowerCase();
-            const count = this.stateManager.analytics.topKeywords.get(keyword) || 0;
-            this.stateManager.analytics.topKeywords.set(keyword, count + 1);
+            filtered = filtered.filter(job => 
+                job.title.toLowerCase().includes(keyword) ||
+                job.description.toLowerCase().includes(keyword)
+            );
         }
 
-        // تتبع مشاركة المستخدمين
-        if (userId) {
-            const engagement = this.stateManager.analytics.userEngagement.get(userId) || 0;
-            this.stateManager.analytics.userEngagement.set(userId, engagement + 1);
-        }
-    }
-
-    // البحث حسب المنطقة
-    async searchByRegion(regionCode, userId = null) {
-        const region = this.stateManager.regions.find(r => r.code === regionCode);
-        if (!region) return [];
-
-        return await this.intelligentSearch({ region: regionCode }, userId);
-    }
-
-    // البحث بالكلمة المفتاحية
-    async searchByKeyword(keyword, userId = null) {
-        return await this.intelligentSearch({ keyword: keyword }, userId);
-    }
-
-    // البحث المخصص
-    async customSearch(params, userId = null) {
-        return await this.intelligentSearch(params, userId);
+        return filtered.slice(0, 20); // أفضل 20 نتيجة
     }
 }
 
 // تهيئة النظام
-const stateManager = new AdvancedStateManager();
-const searchEngine = new SuperiorJobSearchEngine(stateManager);
+const stateManager = new ImprovedStateManager();
+const searchEngine = new ImprovedJobSearchEngine(stateManager);
 
-console.log("✅ Arab Annotators Bot v4.0 جاهز للعمل!");
+// ===== معالج الرسائل =====
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text;
+
+    console.log(`📨 رسالة من ${chatId}: ${text}`);
+
+    try {
+        if (text === '/start') {
+            const welcomeMessage = `
+🤖 **مرحباً بك في Arab Annotators Bot v4.1!**
+
+🎯 البوت المتخصص في البحث عن وظائف الذكاء الاصطناعي والتعليق التوضيحي للبيانات العربية
+
+✨ **الميزات الجديدة:**
+• 🔍 بحث ذكي محسن  
+• 🌐 مصادر متنوعة وموثوقة
+• ⚡ استجابة أسرع وأكثر دقة
+• 🛡️ حماية من الحظر والأخطاء
+
+📋 **الأوامر المتاحة:**
+/jobs - البحث عن الوظائف الجديدة
+/help - دليل الاستخدام
+/status - حالة البوت
+
+🔄 البحث التلقائي كل ساعة مفعل
+            `;
+
+            await bot.sendMessage(chatId, welcomeMessage, { parse_mode: 'Markdown' });
+
+        } else if (text === '/jobs') {
+            const statusMsg = await bot.sendMessage(chatId, "🔍 جاري البحث الذكي عن الوظائف...\n⏳ قد يستغرق هذا بضع ثوانِ");
+
+            const jobs = await searchEngine.smartSearch();
+
+            if (jobs.length > 0) {
+                await bot.editMessageText(`🎯 تم العثور على ${jobs.length} وظيفة عالية الجودة!`, {
+                    chat_id: chatId,
+                    message_id: statusMsg.message_id
+                });
+
+                // إرسال أفضل 5 وظائف
+                for (let i = 0; i < Math.min(jobs.length, 5); i++) {
+                    const job = jobs[i];
+                    const message = `
+🔹 **${job.title}**
+🏢 الشركة: ${job.company}
+📂 الفئة: ${job.category}
+⭐ النقاط: ${job.score}/100
+🔗 [التقديم للوظيفة](${job.url})
+📅 ${new Date(job.dateFound).toLocaleDateString('ar')}
+
+📋 الوصف: ${job.description.substring(0, 200)}...
+                    `;
+
+                    await bot.sendMessage(chatId, message, { 
+                        parse_mode: 'Markdown',
+                        disable_web_page_preview: true
+                    });
+
+                    // تأخير بسيط لتجنب spam
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+
+            } else {
+                await bot.editMessageText(`❌ لم يتم العثور على وظائف جديدة في الوقت الحالي.
+
+💡 **نصائح:**
+• جرب البحث مرة أخرى لاحقاً
+• تأكد من اتصالك بالإنترنت
+• المواقع قد تكون مشغولة حالياً
+
+🔄 سيتم البحث التلقائي خلال ساعة`, {
+                    chat_id: chatId,
+                    message_id: statusMsg.message_id
+                });
+            }
+
+        } else if (text === '/help') {
+            const helpMessage = `
+📚 **دليل استخدام Arab Annotators Bot v4.1**
+
+🔍 **/jobs** - البحث الذكي عن الوظائف
+يبحث في أكثر من 15 موقع موثوق للعثور على:
+• وظائف تعليق البيانات العربية
+• مهام الذكاء الاصطناعي
+• وظائف التفريغ الصوتي
+• المشاريع المستقلة
+
+📊 **/status** - حالة البوت والإحصائيات
+
+❓ **/help** - عرض هذا الدليل
+
+🤖 **كيف يعمل البوت:**
+1. يبحث في المواقع الموثوقة
+2. يصفي النتائج حسب الكلمات المفتاحية
+3. يرتب الوظائف حسب الأهمية
+4. يعرض أفضل النتائج فقط
+
+🔔 **البحث التلقائي:** كل ساعة
+🌍 **المناطق المدعومة:** جميع أنحاء العالم
+💼 **أنواع العمل:** عن بُعد، دوام جزئي، مستقل
+            `;
+
+            await bot.sendMessage(chatId, helpMessage, { parse_mode: 'Markdown' });
+
+        } else if (text === '/status') {
+            const uptime = Math.floor(process.uptime());
+            const hours = Math.floor(uptime / 3600);
+            const minutes = Math.floor((uptime % 3600) / 60);
+
+            const statusMessage = `
+📊 **حالة البوت v4.1**
+
+✅ البوت يعمل بشكل طبيعي
+⏰ وقت التشغيل: ${hours}س ${minutes}د
+💾 استخدام الذاكرة: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB
+🔍 عدد المواقع المراقبة: ${Object.values(stateManager.config.jobSources).flat().length}
+📊 نتائج محفوظة: ${stateManager.searchCache.size}
+
+🔄 **البحث التلقائي:** مفعل
+⚡ **الاستجابة:** محسنة
+🛡️ **الحماية:** مفعلة
+
+🌐 **الخادم:** متصل على المنفذ ${PORT}
+            `;
+
+            await bot.sendMessage(chatId, statusMessage, { parse_mode: 'Markdown' });
+        }
+
+        // تحديث حالة المستخدم
+        stateManager.updateUserState(chatId, { lastMessage: text });
+
+    } catch (error) {
+        console.error('❌ خطأ في معالجة الرسالة:', error);
+        await bot.sendMessage(chatId, "❌ حدث خطأ مؤقت. يرجى المحاولة مرة أخرى.");
+    }
+});
+
+// معالج الأخطاء
+bot.on('error', (error) => {
+    console.error('❌ خطأ في البوت:', error);
+});
+
+bot.on('polling_error', (error) => {
+    console.error('❌ خطأ في الاقتراع:', error);
+});
+
+// البحث التلقائي كل ساعة
+const jobSearchCron = new cron.CronJob('0 * * * *', async () => {
+    console.log("⏰ بدء البحث التلقائي...");
+    try {
+        const jobs = await searchEngine.smartSearch();
+        console.log(`✅ البحث التلقائي: ${jobs.length} وظائف`);
+    } catch (error) {
+        console.error("❌ خطأ في البحث التلقائي:", error);
+    }
+});
+
+jobSearchCron.start();
+
+// معالج إغلاق البرنامج
+process.on('SIGINT', () => {
+    console.log('🛑 إيقاف البوت...');
+    jobSearchCron.stop();
+    bot.stopPolling();
+    process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+    console.log('🛑 إنهاء البوت...');
+    jobSearchCron.stop();
+    bot.stopPolling();
+    process.exit(0);
+});
+
+console.log("✅ Arab Annotators Bot v4.1 جاهز للعمل!");
+console.log("🔍 البحث التلقائي المحسن مفعل");
+console.log("🛡️ الحماية من الأخطاء مفعلة");
 
 module.exports = {
     bot,
@@ -963,4 +620,3 @@ module.exports = {
     searchEngine,
     supabase
 };
-
