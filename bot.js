@@ -559,4 +559,86 @@ bot.on('callback_query', async (query) => {
             case 'region_search':
                 stateManager.updateUserState(chatId, { currentMenu: 'region_search' });
                 await bot.editMessageText("اختر المنطقة التي ترغب في البحث فيها:", {
-                    chat_id: ch
+                    chat_id: chatId,
+                    message_id: messageId,
+                    ...MenuManager.getRegionMenu(stateManager.regions)
+                });
+                break;
+            case 'statistics':
+                const stats = {
+                    totalSources: Object.keys(stateManager.config.jobSources).reduce((sum, cat) => sum + stateManager.config.jobSources[cat].length, 0),
+                    categoriesCount: Object.keys(stateManager.config.jobSources).length,
+                    supportedCountries: stateManager.regions.length,
+                    activeUsers: 12345, // Placeholder
+                    categoryBreakdown: "", // Placeholder
+                    topCategories: "", // Placeholder
+                    todayJobs: 50, // Placeholder
+                    weeklyJobs: 350, // Placeholder
+                    growthRate: 15, // Placeholder
+                    topRegions: "" // Placeholder
+                };
+                await bot.sendMessage(chatId, MessageFormatter.formatStatistics(stats), { parse_mode: 'Markdown' });
+                break;
+            case 'notifications':
+                await bot.sendMessage(chatId, "🔔 إدارة الإشعارات قيد التطوير. ترقبوا الميزات الجديدة!");
+                break;
+            case 'profile':
+                await bot.sendMessage(chatId, "👤 ملفك الشخصي قيد التطوير. ترقبوا الميزات الجديدة!");
+                break;
+            case 'settings':
+                await bot.sendMessage(chatId, "⚙️ الإعدادات قيد التطوير. ترقبوا الميزات الجديدة!");
+                break;
+            case 'premium':
+                await bot.sendMessage(chatId, "💎 الاشتراك المميز قيد التطوير. ترقبوا الميزات الجديدة!");
+                break;
+            case 'help':
+                await bot.sendMessage(chatId, "ℹ️ للمساعدة، يرجى زيارة موقعنا: https://arabannotators.store/help");
+                break;
+            default:
+                if (data.startsWith('region_')) {
+                    const regionCode = data.replace('region_', '');
+                    await bot.sendMessage(chatId, `جاري البحث عن وظائف في ${stateManager.regions.find(r => r.code === regionCode)?.name || regionCode}...`);
+                    const regionJobs = await searchEngine.searchByRegion(regionCode);
+                    await bot.sendMessage(chatId, MessageFormatter.formatJobResults(regionJobs, { region: stateManager.regions.find(r => r.code === regionCode)?.name || regionCode }), { parse_mode: 'Markdown', disable_web_page_preview: true });
+                } else {
+                    await bot.sendMessage(chatId, "أمر غير معروف.");
+                }
+                break;
+        }
+    } catch (error) {
+        console.error("خطأ في معالجة الاستدعاء:", error);
+        await bot.sendMessage(chatId, "حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.");
+    }
+});
+
+// ===== معالجة الأخطاء =====
+bot.on("error", (error) => {
+    console.error("خطأ في البوت:", error);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+    console.error("Unhandled Rejection:", promise, "reason:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+    console.error("Uncaught Exception:", error);
+});
+
+// ===== رسائل بدء التشغيل =====
+console.log("🌍 Arab Annotators Bot v3.0 - أحدث طراز!");
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🌍 Server running on port ${PORT}`);
+});
+
+// وظائف Cron لجدولة المهام (مثال)
+// const job = new cron.CronJob('0 0 * * *', () => {
+//   console.log('Running daily job search...');
+//   searchEngine.smartSearch().then(jobs => {
+//     // Process and send jobs to subscribed users
+//   });
+// }, null, true, 'Asia/Riyadh');
+// job.start();
+
+// وظائف إضافية (مثل معالجة الأوامر الأخرى، إدارة المستخدمين، إلخ)
