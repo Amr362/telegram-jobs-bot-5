@@ -7,4 +7,15 @@ channel = "stable-25_05"
 [deployment]
 run = ["sh", "-c", "npm start"]
 
+[workflows]
+
+[[workflows.workflow]]
+name = "Development"
+author = 45971741
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+
 
