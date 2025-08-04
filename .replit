@@ -5,7 +5,7 @@ run = "npm start"
 channel = "stable-25_05"
 
 [deployment]
-run = ["sh", "-c", "npm start"]
+run = ["sh", "-c", "node enhanced_bot_v4.js"]
 
 [workflows]
 runButton = "Start Bot"
@@ -23,6 +23,23 @@ args = "npm run dev"
 name = "Start Bot"
 author = 45971741
 mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node enhanced_bot_v4.js"
+
+[[workflows.workflow]]
+name = "Restart Bot"
+author = 45971741
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -f \"node enhanced_bot_v4.js\" || true"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 3"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
