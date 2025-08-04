@@ -45,4 +45,8 @@ args = "sleep 3"
 task = "shell.exec"
 args = "node enhanced_bot_v4.js"
 
+[[ports]]
+localPort = 3000
+externalPort = 80
+
 
